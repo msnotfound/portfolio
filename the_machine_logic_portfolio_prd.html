@@ -1,0 +1,216 @@
+# The Machine Logic Portfolio
+
+## Product Overview
+
+**The Pitch:** A brutally functional, low-level developer portfolio that strips away marketing fluff to expose raw technical competence. It functions as a read-only terminal environment, treating the developer's career and output as system logs, architecture schematics, and executable modules.
+
+**For:** Staff engineers, hiring managers, and technical recruiters who value substance, performance, and deep systems-level thinking over flashy animations.
+
+**Device:** desktop
+
+**Design Direction:** High-contrast, hardware-inspired terminal aesthetic. 1px solid borders, monospace density, and raw data presentation.
+
+**Inspired by:** BIOS screens, `htop`, classic mainframe interfaces.
+
+---
+
+## Screens
+
+- **`init.sh` (Home):** System boot sequence establishing the developer's core parameters and current status.
+- **`modules.log` (Projects):** Tabular, data-dense readout of shipped projects, architectures, and repositories.
+- **`runtime.sys` (Experience):** Chronological execution log of career history, role parameters, and impact metrics.
+- **`stdout.pipe` (Contact):** Utilitarian I/O interface for external communications and social links.
+
+---
+
+## Key Flows
+
+**System Navigation:** Navigating the portfolio via command palette.
+
+1. User is on `init.sh` -> sees blinking block cursor and prompt `[SYS_GUEST@portfolio ~]$`
+2. User presses `Cmd+K` -> command palette modal overlays with 1px border and scanline effect
+3. User types `cd modules` and hits `Enter` -> instant screen transition to `modules.log`
+
+---
+
+<details>
+<summary>Design System</summary>
+
+## Color Palette
+
+- **Primary:** `#FFB000` - Amber CRT text, borders, active states, cursors
+- **Background:** `#050505` - Deep void background
+- **Surface:** `#0A0A0A` - Command palettes, active row highlights
+- **Text:** `#FFB000` - All typography uses primary amber
+- **Muted:** `#7A5500` - Inactive tabs, secondary metrics, timestamp logs
+- **Accent:** `#FF3333` - Error states, critical alerts, system halts
+
+## Typography
+
+Distinctive, rigid monospace typography engineered for data density.
+
+- **Headings:** `JetBrains Mono`, 700, 24px, uppercase tracking
+- **Body:** `IBM Plex Mono`, 400, 14px, 1.5 line-height
+- **Small text:** `IBM Plex Mono`, 400, 12px
+- **Buttons:** `JetBrains Mono`, 700, 14px, `[ BRACKETED ]`
+
+**Style notes:** Sharp corners (`0px` radius). 1px solid `#FFB000` borders. No shadows, gradients, or blurs. CSS-based scanline overlay overlaying the entire viewport at 5% opacity.
+
+## Design Tokens
+
+```css
+:root {
+  --color-primary: #FFB000;
+  --color-background: #050505;
+  --color-surface: #0A0A0A;
+  --color-text: #FFB000;
+  --color-muted: #7A5500;
+  --color-accent: #FF3333;
+  --font-heading: 'JetBrains Mono', monospace;
+  --font-body: 'IBM Plex Mono', monospace;
+  --radius: 0px;
+  --border: 1px solid var(--color-primary);
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 32px;
+}
+```
+
+</details>
+
+---
+
+<details>
+<summary>Screen Specifications</summary>
+
+### `init.sh` (Home)
+
+**Purpose:** Initial system boot and developer summary.
+
+**Layout:** Top-down sequential log output, left-aligned, occupying a maximum width of `800px` centered on the viewport.
+
+**Key Elements:**
+- **System Header:** ASCII art logo (`12px`, `JetBrains Mono`), current system time `UTC`, uptime metric.
+- **Bio Block:** Key/value paired list of developer stats (e.g., `LANGUAGES: Rust, C++, Go`, `STATUS: Compiling`).
+- **Command Prompt:** Persistent footer input `[SYS_GUEST@portfolio ~]$ _` with blinking block cursor.
+
+**States:**
+- **Loading:** Boot sequence prints lines line-by-line with random `10-50ms` delays.
+- **Empty:** N/A (Static data).
+- **Error:** Failsafe fallback to static text if JS fails.
+
+**Components:**
+- **Key-Value Pair:** `width: 100%`, `display: flex`, left column `width: 150px` in `--color-muted`, right column in `--color-primary`.
+
+**Interactions:**
+- **Hover Prompt:** Cursor blink rate increases.
+- **Click anywhere:** Focuses invisible input triggering command palette.
+
+**Responsive:**
+- **Desktop:** `800px` centered column, `32px` padding.
+- **Tablet:** `100%` width, `24px` padding.
+- **Mobile:** `100%` width, `16px` padding, font-size reduced to `12px`.
+
+### `modules.log` (Projects)
+
+**Purpose:** High-density tabular view of shipped software.
+
+**Layout:** Full-width data table (`border-collapse`), fixed headers.
+
+**Key Elements:**
+- **Directory Path:** Top header showing `~/portfolio/modules.log`.
+- **Data Table:** Columns: `ID`, `MODULE_NAME`, `STACK`, `LOC`, `STATUS`, `REPO_LINK`.
+- **Row Highlight:** 1px border on top and bottom of the row on hover.
+
+**States:**
+- **Loading:** `FETCHING MODULE MAP...` spinning ASCII cursor (`- \ | /`).
+- **Empty:** `NO MODULES FOUND IN DIRECTORY`.
+- **Error:** `ERR 0x0002: CORRUPTED INDEX`.
+
+**Components:**
+- **Table Header:** `background: var(--color-surface)`, `border-bottom: var(--border)`, `text-transform: uppercase`.
+- **Status Badge:** `[ OK ]` in primary color, `[ DEPRECATED ]` in muted color.
+
+**Interactions:**
+- **Hover Row:** Row background shifts to `--color-surface`.
+- **Click `REPO_LINK`:** Opens raw GitHub URL in new tab.
+
+**Responsive:**
+- **Desktop:** All 6 columns visible.
+- **Tablet:** Hides `LOC` column.
+- **Mobile:** Converts table to stacked key-value blocks per project.
+
+### `runtime.sys` (Experience)
+
+**Purpose:** Chronological list of past roles formatted as process executions.
+
+**Layout:** Two-column split. Left: Timeline spine. Right: Process details.
+
+**Key Elements:**
+- **Process ID (PID):** Represents the year (e.g., `PID: 2021`).
+- **Execution Block:** Company name, title, and bulleted output of impact metrics.
+- **Memory Dump:** Small schematic or architecture graph (pre-rendered ASCII) for the most recent role.
+
+**States:**
+- **Loading:** `ANALYZING RUNTIME HISTORY...`.
+- **Empty:** `UPTIME: 0`.
+- **Error:** `KERNAL PANIC: TIMELINE MISSING`.
+
+**Components:**
+- **Timeline Node:** `12px` solid square `#FFB000` connected by `1px` vertical line.
+- **Metric Bullet:** Prefixed with `>` instead of standard dot.
+
+**Interactions:**
+- **Hover Node:** Solid square turns to hollow `[ ]` outline.
+- **Scroll:** Active process highlights in `--color-primary`, others fade to `--color-muted`.
+
+**Responsive:**
+- **Desktop:** Split `200px` left spine, `600px` right content.
+- **Tablet:** Spine reduces to `100px`.
+- **Mobile:** Spine disappears; PID rendered as inline headers above each block.
+
+### `stdout.pipe` (Contact)
+
+**Purpose:** Standard output for contacting the developer.
+
+**Layout:** Terminal form interface, raw and unstyled inputs.
+
+**Key Elements:**
+- **PGP Key Block:** Collapsible `<details>` block with raw public PGP key.
+- **Input Stream:** Form fields labeled `SENDER_IP`, `PACKET_PAYLOAD`.
+- **Transmit Command:** Button styled as `[ EXECUTE TX ]`.
+
+**States:**
+- **Loading:** `TRANSMITTING...`
+- **Empty:** Default placeholder `AWAITING INPUT...`.
+- **Error:** `TX FAILED: CHECK CONNECTION`.
+
+**Components:**
+- **Form Input:** `background: transparent`, `border: 1px solid var(--color-muted)`, `color: var(--color-primary)`, `border-radius: 0`. Focus state: `border-color: var(--color-primary)`.
+
+**Interactions:**
+- **Focus Input:** Label brackets highlight `[ SENDER_IP ]`.
+- **Click Transmit:** Button text swaps to `TX_SUCCESS` upon submission.
+
+**Responsive:**
+- **Desktop:** Side-by-side: PGP left, Form right.
+- **Tablet:** Stacked layout.
+- **Mobile:** Stacked layout, full-width inputs.
+
+</details>
+
+---
+
+<details>
+<summary>Build Guide</summary>
+
+**Stack:** HTML + Tailwind CSS v3
+
+**Build Order:**
+1. **Global CSS & `init.sh`:** Establish the scanline effect, typography, and raw color palette. Get the boot sequence animation timing right.
+2. **Command Palette (`Cmd+K`):** Build the global navigation mechanism, as there are no traditional header links.
+3. **`modules.log`:** Build the dense data table component.
+4. **`runtime.sys`:** Implement the timeline intersection observer logic.
+5. **`stdout.pipe`:** Finalize form inputs and PGP block formatting.
+
+</details>

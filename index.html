@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mayank Sahu | Cursor Mask Prototype</title>
+    <meta
+      name="description"
+      content="A first portfolio prototype exploring a cursor-following masked reveal interaction."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230a0a0b'/%3E%3Cpath d='M12 48V16h8l12 18 12-18h8v32h-8V29L35 43h-6L20 29v19z' fill='%23d1ff48'/%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="mask-stage" data-mask-root>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="perimeter perimeter-top" aria-hidden="true">
+        <span>Mayank Sahu</span>
+        <span>AI systems / automation / research artifacts</span>
+      </div>
+
+      <section class="hero hero-base" aria-label="Portfolio introduction">
+        <p class="kicker">Portfolio prototype / cursor reveal</p>
+        <h1>
+          <span class="line-wrap"><span>I build AI systems</span></span>
+          <span class="line-wrap"><span><em>that survive contact</em></span></span>
+          <span class="line-wrap"><span>with real constraints.</span></span>
+        </h1>
+      </section>
+
+      <section class="hero hero-reveal" data-mask-surface aria-hidden="true"></section>
+
+      <div class="hero-grid">
+        <p>
+          Agentic automation, backend prototypes, developer tools, and research-backed
+          systems engineering.
+        </p>
+        <p>
+          Available for focused freelance builds, technical prototypes, and debugging
+          work.
+        </p>
+      </div>
+
+      <div class="cursor-orbit" data-mask-cursor aria-hidden="true"></div>
+
+      <nav class="hero-actions" aria-label="Primary links">
+        <a class="magnetic-link primary-link" href="mailto:hello@mayanksahu.dev" data-magnetic>
+          Hire me
+        </a>
+        <a class="magnetic-link" href="https://github.com/msnotfound" data-magnetic>
+          GitHub
+        </a>
+        <a class="magnetic-link" href="https://www.linkedin.com/" data-magnetic>
+          LinkedIn
+        </a>
+      </nav>
+
+      <div class="perimeter perimeter-bottom" aria-hidden="true">
+        <span>Services first</span>
+        <span>Selected work next</span>
+        <span>Research as credibility</span>
+      </div>
+    </main>
+
+    <section class="work-section" aria-labelledby="work-title">
+      <div class="section-label">Selected work</div>
+      <h2 id="work-title">Proof that can be opened, read, tested, or hired against.</h2>
+      <div class="work-list" data-work-list>
+        <a
+          href="https://github.com/msnotfound/fleetorch"
+          data-preview-title="Fleetorch"
+          data-preview-meta="Go / CLI / agent orchestration"
+          data-preview-copy="Routes AI coding work across local CLI agents with budgets, concurrency, and isolated execution."
+          data-preview-variant="fleetorch"
+        >
+          <span>01</span>
+          <strong>Fleetorch</strong>
+          <small>Multi-agent coding orchestrator</small>
+        </a>
+        <a
+          href="#phantom"
+          data-preview-title="Phantom"
+          data-preview-meta="Research artifact / desktop automation"
+          data-preview-copy="Linux desktop middleware that records workflows and compiles them into replayable execution graphs."
+          data-preview-variant="phantom"
+        >
+          <span>02</span>
+          <strong>Phantom</strong>
+          <small>Cost-amortized agentic automation</small>
+        </a>
+        <a
+          href="https://github.com/msnotfound/ghostsignal"
+          data-preview-title="GhostSignal"
+          data-preview-meta="Web3 / agents / ZK systems"
+          data-preview-copy="A zero-knowledge signal marketplace concept with agentic workflows and cryptographic verification."
+          data-preview-variant="ghostsignal"
+        >
+          <span>03</span>
+          <strong>GhostSignal</strong>
+          <small>Verifiable AI signal infrastructure</small>
+        </a>
+        <a
+          href="#sahayak"
+          data-preview-title="Sahayak"
+          data-preview-meta="Offline-first AI / RAG / public service"
+          data-preview-copy="Low-connectivity copilot architecture for field workflows, local retrieval, OCR, and batch sync."
+          data-preview-variant="sahayak"
+        >
+          <span>04</span>
+          <strong>Sahayak</strong>
+          <small>Offline-first AI service copilot</small>
+        </a>
+      </div>
+    </section>
+
+    <aside class="work-preview" data-work-preview aria-hidden="true">
+      <div class="work-preview-track" data-work-preview-track>
+        <article class="work-preview-card">
+          <div class="preview-mark"></div>
+          <p>Go / CLI / agent orchestration</p>
+          <h3>Fleetorch</h3>
+          <span>Routes AI coding work across local CLI agents with budgets, concurrency, and isolated execution.</span>
+        </article>
+        <article class="work-preview-card">
+          <div class="preview-mark"></div>
+          <p>Research artifact / desktop automation</p>
+          <h3>Phantom</h3>
+          <span>Linux desktop middleware that records workflows and compiles them into replayable execution graphs.</span>
+        </article>
+        <article class="work-preview-card">
+          <div class="preview-mark"></div>
+          <p>Web3 / agents / ZK systems</p>
+          <h3>GhostSignal</h3>
+          <span>A zero-knowledge signal marketplace concept with agentic workflows and cryptographic verification.</span>
+        </article>
+        <article class="work-preview-card">
+          <div class="preview-mark"></div>
+          <p>Offline-first AI / RAG / public service</p>
+          <h3>Sahayak</h3>
+          <span>Low-connectivity copilot architecture for field workflows, local retrieval, OCR, and batch sync.</span>
+        </article>
+      </div>
+    </aside>
+
+    <script type="module">
+      import {
+        createCursorMaskController,
+        createMagneticButtonController,
+        createWorkPreviewController,
+      } from "./src/cursorMask.mjs";
+
+      const root = document.querySelector("[data-mask-root]");
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (root && !prefersReducedMotion && window.PointerEvent) {
+        createCursorMaskController(root, {
+          ease: 0.16,
+        });
+      } else if (root) {
+        root.dataset.maskActive = "true";
+        root.style.setProperty("--mask-size", "100vmax");
+        root.style.setProperty("--mask-x", "50vw");
+        root.style.setProperty("--mask-y", "50vh");
+      }
+
+      if (!prefersReducedMotion && window.PointerEvent) {
+        createMagneticButtonController(document);
+        createWorkPreviewController(document);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,191 @@
+# Kinetic Luxury Portfolio
+
+## Product Overview
+
+**The Pitch:** A visceral, high-performance interactive portfolio that proves elite frontend mastery without saying a word. It merges editorial luxury with creative engineering to position the developer as a premium digital craftsman.
+
+**For:** Creative directors, technical founders, and high-end agency leads seeking top-tier creative engineering talent.
+
+**Device:** desktop
+
+**Design Direction:** Deep charcoal canvas punctuated by liquid silver gradients, asymmetric editorial typography, and physics-based WebGL interactions.
+
+**Inspired by:** Aristide Benoist portfolios, Lusion, High-end fashion editorials.
+
+---
+
+## Screens
+
+- **Home:** Interactive WebGL hero and high-level manifesto
+- **Archive:** Asymmetric, horizontally-scrolling index of projects
+- **Case Study:** Deep-dive editorial layout detailing technical architecture and visual outcomes
+- **Philosophy:** Text-heavy, kinetic typography manifesto on creative engineering
+- **Terminal (Contact):** Minimalist, command-line inspired inquiry form
+
+---
+
+## Key Flows
+
+**Explore Archive:** View past work with spatial context
+1. User is on Home -> sees liquid WebGL sphere and scroll prompt
+2. User scrolls down -> sphere morphs into the background, revealing the Archive link
+3. User clicks `[Archive]` -> smooth page transition into horizontal scroll view
+
+**Initiate Contact:** Send inquiry
+1. User is on any page -> sees persistent `[INITIATE]` button in top right
+2. User clicks `[INITIATE]` -> screen splits, revealing Terminal interface
+3. User types command or clicks predefined prompts -> email draft is generated
+
+---
+
+<details>
+<summary>Design System</summary>
+
+## Color Palette
+
+- **Primary:** `#D1FF48` - Acid Yellow (Links, active states, custom cursors)
+- **Background:** `#0A0A0B` - Deep Vantablack
+- **Surface:** `#141416` - Subtle elevation for cards and modals
+- **Text:** `#EBEBEB` - Soft Titanium
+- **Muted:** `#5C5C60` - Slate grey (Metadata, borders, inactive states)
+- **Accent:** `#FF4848` - Error, destructive actions
+
+## Typography
+
+- **Headings:** `PP Editorial New`, Italic & Regular, 400/200, 64-120px
+- **Body:** `JetBrains Mono`, 400, 15px, 150% line-height
+- **Small text:** `JetBrains Mono`, 300, 12px, uppercase, 0.05em tracking
+- **Buttons:** `JetBrains Mono`, 500, 13px, uppercase
+
+**Style notes:** 
+- `0px` border radius on all elements (brutalist/sharp edges)
+- 1px solid `#5C5C60` borders for structure
+- Custom trailing cursor (invert blend mode)
+- Fluid typography scaling
+- Grain overlay (SVG noise at 4% opacity) on entire body
+
+## Design Tokens
+
+```css
+:root {
+  --color-primary: #D1FF48;
+  --color-background: #0A0A0B;
+  --color-surface: #141416;
+  --color-text: #EBEBEB;
+  --color-muted: #5C5C60;
+  --font-heading: 'PP Editorial New', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 0px;
+  --spacing-base: 8px;
+  --spacing-lg: 120px;
+  --transition-fluid: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+```
+
+</details>
+
+---
+
+<details>
+<summary>Screen Specifications</summary>
+
+### Home
+
+**Purpose:** Hook the visitor with undeniably premium technical execution.
+
+**Layout:** Full viewport WebGL canvas, overlapping absolute-positioned typography, fixed perimeter navigation.
+
+**Key Elements:**
+- **WebGL Hero Object:** Fluid, chrome-like liquid sphere tracking mouse movement
+- **Title Block:** Bottom-left aligned, overlapping `PP Editorial New` reading "Creative Engineer"
+- **Metadata Ticker:** Top-right, monospace marquee displaying current local time, availability, and active tech stack
+
+**States:**
+- **Loading:** Black screen, monospace counter `000` to `100`, slicing open vertically
+
+**Interactions:**
+- **Hover WebGL:** Sphere distorts using simplex noise, reflects Acid Yellow
+- **Scroll:** Page elements translate Y at different speeds (parallax), WebGL fades opacity
+
+### Archive
+
+**Purpose:** Showcase projects in a non-standard, premium format.
+
+**Layout:** Horizontal scroll container, baseline-aligned asymmetric image track.
+
+**Key Elements:**
+- **Project Cards:** 16:9 and 3:4 alternating ratios, grayscale until hover
+- **Index List:** Fixed left column, numbered list (`01`, `02`) syncing with active scroll item
+- **Year Markers:** Massive watermark typography behind the scroll track
+
+**Components:**
+- **Project Card:** `w-[60vw]`, 1px border, grayscale filter. Content: Image, absolute bottom-left title, top-right tech stack tags.
+
+**Interactions:**
+- **Hover Card:** Grayscale transitions to full color over `0.8s`. Image scales `1.05`. Title shifts X by `10px`.
+- **Click Card:** Image expands to fill viewport, transitioning seamlessly into Case Study.
+
+### Case Study
+
+**Purpose:** Detail the technical implementation and visual results of a specific project.
+
+**Layout:** Split-screen editorial. Left side sticky sticky metadata, right side fluid scroll content.
+
+**Key Elements:**
+- **Hero Image:** Full width, fixed height `70vh`, parallax scroll
+- **Technical Specs Block:** Monospace grid detailing `Role`, `Stack`, `Duration`, `Live URL`
+- **Media Grid:** Asymmetric interlocking videos and images showcasing interactions
+
+**Components:**
+- **Code Snippet:** Darker surface `#050505`, syntax highlighted in Acid Yellow and Titanium, monospace.
+
+**Interactions:**
+- **Scroll:** Videos auto-play upon intersecting viewport. Images reveal via staggered mask-up animations.
+
+### Philosophy
+
+**Purpose:** Communicate mindset, work ethic, and technical opinions.
+
+**Layout:** Single-column, massive typography, heavy use of whitespace.
+
+**Key Elements:**
+- **Manifesto Text:** `PP Editorial New`, `96px` text filling the viewport
+- **Inline Hover Links:** Specific words act as triggers for pop-up video tooltips
+
+**Interactions:**
+- **Hover specific words:** Small `200x300` video plays attached to cursor (e.g., hovering "Performance" shows a 60fps framerate graph).
+
+### Terminal (Contact)
+
+**Purpose:** High-friction, high-reward contact method favoring technical users.
+
+**Layout:** Centered modal overlay, terminal aesthetic.
+
+**Key Elements:**
+- **Command Line:** Blinking block cursor, `[guest@portfolio] $` prompt
+- **Quick Actions:** Row of monospace buttons (`--hire`, `--collab`, `--socials`) below the prompt for users who don't want to type.
+
+**States:**
+- **Empty:** Awaiting input
+- **Error:** Invalid command shakes horizontally, red text `#FF4848` `Command not found. Type 'help'.`
+
+**Interactions:**
+- **Type `hire` + Enter:** Replaces interface with a minimal email form (Name, Project, Budget dropdown).
+
+</details>
+
+---
+
+<details>
+<summary>Build Guide</summary>
+
+**Stack:** HTML + Tailwind CSS v3 + GSAP (animations) + Three.js (WebGL)
+
+**Build Order:**
+1. **Design System & Layout:** Base HTML, global Tailwind CSS config, CSS variables, custom cursors.
+2. **Home (WebGL):** Implement Three.js canvas, liquid shader, mouse tracking.
+3. **Archive:** Set up GSAP ScrollTrigger for horizontal scroll masking.
+4. **Case Study & Philosophy:** Editorial layouts, sticky positioning, typography scaling.
+5. **Terminal:** Keyboard event listeners, command parsing logic, state management for form reveal.
+
+</details>
