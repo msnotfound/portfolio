@@ -83,31 +83,22 @@ body {
 
 .hero {
   position: absolute;
-  top: 48%;
-  left: clamp(20px, 6vw, 84px);
-  width: min(82rem, calc(100vw - clamp(40px, 12vw, 168px)));
-  transform: translateY(-50%);
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(88px, 9vw, 132px) clamp(20px, 6vw, 84px);
 }
 
 .hero-base {
   z-index: 1;
-  isolation: isolate;
-}
-
-.hero-copy {
-  position: relative;
-  z-index: 1;
+  background:
+    radial-gradient(circle at 75% 25%, rgba(235, 235, 235, 0.08), transparent 34%),
+    var(--background);
 }
 
 .hero-reveal {
-  top: 0;
-  left: 0;
-  inset: 0;
-  width: auto;
-  height: 100%;
-  transform: none;
   z-index: 2;
-  overflow: hidden;
   color: var(--black);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(209, 255, 72, 0.96)),
@@ -435,9 +426,7 @@ h2 em {
   }
 
   .hero {
-    top: 42%;
-    left: 18px;
-    width: calc(100vw - 36px);
+    padding: 92px 18px;
   }
 
   .hero-grid {
