@@ -100,3 +100,21 @@ test("hero typography and cursor are calibrated for the first viewport", () => {
   assert.match(cssBlock(".cursor-orbit"), /height:\s*8px/);
   assert.match(cssBlock(".cursor-orbit"), /opacity:\s*1/);
 });
+
+test("cursor follower is global and fixed above all page sections", () => {
+  const mainStart = indexOfSnippet('<main class="mask-stage" data-mask-root>');
+  const mainEnd = findMatchingCloseTag(mainStart, "main");
+  const cursorStart = indexOfSnippet('<div class="cursor-orbit" data-mask-cursor aria-hidden="true"></div>');
+  const cursorBlock = cssBlock(".cursor-orbit");
+
+  assert.ok(cursorStart > mainEnd, "Expected cursor follower outside the hero main stage");
+  assert.match(cursorBlock, /position:\s*fixed/);
+  assert.match(cursorBlock, /z-index:\s*9999/);
+  assert.match(cursorBlock, /will-change:\s*transform/);
+  assert.match(cssBlock(".cursor-orbit.is-interactive"), /width:\s*16px/);
+  assert.match(
+    css,
+    /html,\s*body,\s*a,\s*button,\s*\[data-magnetic\]\s*\{[^}]*cursor:\s*none !important;/,
+    "Expected native cursor hidden globally over document and interactive elements",
+  );
+});

@@ -10,10 +10,15 @@ export function computeMaskPosition(pointerEvent, rect) {
   };
 }
 
-export function computeLayeredMaskPosition(pointerEvent, maskRect, rootRect) {
+export function computeLayeredMaskPosition(pointerEvent, maskRect) {
   return {
     mask: computeMaskPosition(pointerEvent, maskRect),
-    cursor: computeMaskPosition(pointerEvent, rootRect),
+    cursor: {
+      x: pointerEvent.clientX,
+      y: pointerEvent.clientY,
+      xCss: `${Math.round(pointerEvent.clientX)}px`,
+      yCss: `${Math.round(pointerEvent.clientY)}px`,
+    },
   };
 }
 
@@ -127,17 +132,23 @@ export function createCursorMaskController(root, options = {}) {
     throw new Error("createCursorMaskController requires a root element");
   }
 
-  const cursor = root.querySelector("[data-mask-cursor]");
+  const cursor =
+    options.cursorElement ??
+    root.querySelector("[data-mask-cursor]") ??
+    root.ownerDocument?.querySelector("[data-mask-cursor]");
   const maskSurface = root.querySelector("[data-mask-surface]") || root;
   const expandedMaskSize =
     options.expandedMaskSize ?? getMaskSizeForInteraction("expanded");
   const idleMaskSize = options.idleMaskSize ?? getMaskSizeForInteraction("idle");
   const ease = options.ease ?? 0.18;
-  let isInside = false;
+  let hasPointer = false;
   let animationFrame = 0;
   let current = { x: maskSurface.clientWidth / 2, y: maskSurface.clientHeight / 2 };
   let target = { ...current };
-  let cursorCurrent = { x: root.clientWidth / 2, y: root.clientHeight / 2 };
+  let cursorCurrent = {
+    x: root.ownerDocument?.defaultView?.innerWidth / 2 || 0,
+    y: root.ownerDocument?.defaultView?.innerHeight / 2 || 0,
+  };
   let cursorTarget = { ...cursorCurrent };
 
   const setMaskSize = (size) => {
@@ -148,7 +159,6 @@ export function createCursorMaskController(root, options = {}) {
     const positions = computeLayeredMaskPosition(
       event,
       maskSurface.getBoundingClientRect(),
-      root.getBoundingClientRect(),
     );
     target = { x: positions.mask.x, y: positions.mask.y };
     cursorTarget = { x: positions.cursor.x, y: positions.cursor.y };
@@ -174,7 +184,7 @@ export function createCursorMaskController(root, options = {}) {
     const deltaY = Math.abs(current.y - target.y);
     const cursorDeltaX = Math.abs(cursorCurrent.x - cursorTarget.x);
     const cursorDeltaY = Math.abs(cursorCurrent.y - cursorTarget.y);
-    if (isInside || deltaX > 0.5 || deltaY > 0.5 || cursorDeltaX > 0.5 || cursorDeltaY > 0.5) {
+    if (hasPointer || deltaX > 0.5 || deltaY > 0.5 || cursorDeltaX > 0.5 || cursorDeltaY > 0.5) {
       animationFrame = requestAnimationFrame(renderPosition);
     } else {
       animationFrame = 0;
@@ -188,8 +198,9 @@ export function createCursorMaskController(root, options = {}) {
   };
 
   const handlePointerMove = (event) => {
-    isInside = true;
+    hasPointer = true;
     setTargetPosition(event);
+    cursor?.classList.toggle("is-interactive", Boolean(event.target?.closest?.("a, button, [data-magnetic], .work-list a")));
     setMaskSize(
       getMaskSizeForTarget(isMaskExpansionTarget(event.target), {
         expanded: expandedMaskSize,
@@ -199,33 +210,28 @@ export function createCursorMaskController(root, options = {}) {
   };
 
   const handlePointerEnter = (event) => {
-    isInside = true;
-    setTargetPosition(event);
-    setMaskSize(
-      getMaskSizeForTarget(isMaskExpansionTarget(event.target), {
-        expanded: expandedMaskSize,
-        idle: idleMaskSize,
-      }),
-    );
+    handlePointerMove(event);
     root.dataset.maskActive = "true";
   };
 
   const handlePointerLeave = () => {
-    isInside = false;
+    hasPointer = false;
     setMaskSize(idleMaskSize);
+    cursor?.classList.remove("is-interactive");
     root.dataset.maskActive = "false";
   };
 
-  root.addEventListener("pointerenter", handlePointerEnter);
-  root.addEventListener("pointermove", handlePointerMove);
-  root.addEventListener("pointerleave", handlePointerLeave);
+  const targetWindow = root.ownerDocument?.defaultView ?? window;
+  targetWindow.addEventListener("pointerenter", handlePointerEnter);
+  targetWindow.addEventListener("pointermove", handlePointerMove);
+  targetWindow.addEventListener("pointerleave", handlePointerLeave);
   setMaskSize(idleMaskSize);
 
   return {
     destroy() {
-      root.removeEventListener("pointerenter", handlePointerEnter);
-      root.removeEventListener("pointermove", handlePointerMove);
-      root.removeEventListener("pointerleave", handlePointerLeave);
+      targetWindow.removeEventListener("pointerenter", handlePointerEnter);
+      targetWindow.removeEventListener("pointermove", handlePointerMove);
+      targetWindow.removeEventListener("pointerleave", handlePointerLeave);
       if (animationFrame) cancelAnimationFrame(animationFrame);
     },
   };

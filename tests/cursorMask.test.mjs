@@ -60,7 +60,6 @@ test("computeLayeredMaskPosition separates clipped mask coords from stage cursor
   const positions = computeLayeredMaskPosition(
     { clientX: 640, clientY: 520 },
     { left: 120, top: 180, width: 900, height: 420 },
-    { left: 0, top: 100, width: 1280, height: 720 },
   );
 
   assert.deepEqual(positions, {
@@ -72,9 +71,9 @@ test("computeLayeredMaskPosition separates clipped mask coords from stage cursor
     },
     cursor: {
       x: 640,
-      y: 420,
+      y: 520,
       xCss: "640px",
-      yCss: "420px",
+      yCss: "520px",
     },
   });
 });
