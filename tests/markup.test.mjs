@@ -10,14 +10,18 @@ function indexOfSnippet(snippet) {
   return index;
 }
 
-test("hero reveal is an empty mask surface outside hero base", () => {
+test("hero reveal contains the alternate cursor-mask copy outside hero base", () => {
   const baseStart = indexOfSnippet('<section class="hero hero-base" aria-label="Portfolio introduction">');
   const baseEnd = html.indexOf("</section>", baseStart);
-  const reveal = /<section class="hero hero-reveal" data-mask-surface aria-hidden="true">\s*<\/section>/;
-  const revealStart = html.search(reveal);
+  const revealStart = indexOfSnippet('<section class="hero hero-reveal" data-mask-surface aria-hidden="true">');
+  const revealEnd = html.indexOf("</section>", revealStart);
 
-  assert.notEqual(revealStart, -1, "Expected hero reveal to be an empty mask surface");
   assert.ok(revealStart > baseEnd, "Expected hero reveal outside and after hero base");
+  assert.match(
+    html.slice(revealStart, revealEnd),
+    /Under the surface[\s\S]*Not a template\.[\s\S]*A working proof[\s\S]*of taste and execution\./,
+    "Expected hero reveal to contain alternate masked copy",
+  );
 });
 
 test("shared hero content sits outside the base and reveal sections", () => {
