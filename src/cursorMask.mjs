@@ -10,6 +10,13 @@ export function computeMaskPosition(pointerEvent, rect) {
   };
 }
 
+export function computeLayeredMaskPosition(pointerEvent, maskRect, rootRect) {
+  return {
+    mask: computeMaskPosition(pointerEvent, maskRect),
+    cursor: computeMaskPosition(pointerEvent, rootRect),
+  };
+}
+
 export function computeMaskBounds(viewport, inset) {
   return {
     left: inset.left,
@@ -130,32 +137,44 @@ export function createCursorMaskController(root, options = {}) {
   let animationFrame = 0;
   let current = { x: maskSurface.clientWidth / 2, y: maskSurface.clientHeight / 2 };
   let target = { ...current };
+  let cursorCurrent = { x: root.clientWidth / 2, y: root.clientHeight / 2 };
+  let cursorTarget = { ...cursorCurrent };
 
   const setMaskSize = (size) => {
     maskSurface.style.setProperty("--mask-size", `${size}px`);
   };
 
   const setTargetPosition = (event) => {
-    const position = computeMaskPosition(event, maskSurface.getBoundingClientRect());
-    target = { x: position.x, y: position.y };
+    const positions = computeLayeredMaskPosition(
+      event,
+      maskSurface.getBoundingClientRect(),
+      root.getBoundingClientRect(),
+    );
+    target = { x: positions.mask.x, y: positions.mask.y };
+    cursorTarget = { x: positions.cursor.x, y: positions.cursor.y };
     startAnimation();
   };
 
   const renderPosition = () => {
     current = interpolatePosition(current, target, ease);
+    cursorCurrent = interpolatePosition(cursorCurrent, cursorTarget, ease);
     const xCss = `${Math.round(current.x)}px`;
     const yCss = `${Math.round(current.y)}px`;
+    const cursorXCss = `${Math.round(cursorCurrent.x)}px`;
+    const cursorYCss = `${Math.round(cursorCurrent.y)}px`;
 
     maskSurface.style.setProperty("--mask-x", xCss);
     maskSurface.style.setProperty("--mask-y", yCss);
 
     if (cursor) {
-      cursor.style.transform = `translate3d(${xCss}, ${yCss}, 0) translate(-50%, -50%)`;
+      cursor.style.transform = `translate3d(${cursorXCss}, ${cursorYCss}, 0) translate(-50%, -50%)`;
     }
 
     const deltaX = Math.abs(current.x - target.x);
     const deltaY = Math.abs(current.y - target.y);
-    if (isInside || deltaX > 0.5 || deltaY > 0.5) {
+    const cursorDeltaX = Math.abs(cursorCurrent.x - cursorTarget.x);
+    const cursorDeltaY = Math.abs(cursorCurrent.y - cursorTarget.y);
+    if (isInside || deltaX > 0.5 || deltaY > 0.5 || cursorDeltaX > 0.5 || cursorDeltaY > 0.5) {
       animationFrame = requestAnimationFrame(renderPosition);
     } else {
       animationFrame = 0;

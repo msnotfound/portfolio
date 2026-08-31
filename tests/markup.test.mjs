@@ -67,3 +67,36 @@ test("shared hero content sits outside the base and reveal sections", () => {
 test("reveal layer does not contain phantom magnetic button styling", () => {
   assert.doesNotMatch(css, /\.hero-reveal\s+\.magnetic-link/);
 });
+
+function cssBlock(selector) {
+  const escaped = selector.replaceAll(".", "\\.");
+  const match = css.match(new RegExp(`${escaped}\\s*\\{([^}]*)\\}`));
+  assert.ok(match, `Expected CSS block for ${selector}`);
+  return match[1];
+}
+
+test("hero content is grouped in one non-overlapping flow stack", () => {
+  const stackStart = indexOfSnippet('<div class="hero-stack">');
+  const stackEnd = findMatchingCloseTag(stackStart, "div");
+
+  for (const snippet of [
+    '<section class="hero hero-base" aria-label="Portfolio introduction">',
+    '<div class="hero-grid">',
+    '<nav class="hero-actions" aria-label="Primary links">',
+  ]) {
+    const index = indexOfSnippet(snippet);
+    assert.ok(index > stackStart && index < stackEnd, `${snippet} should be inside hero stack`);
+  }
+
+  for (const selector of [".hero", ".hero-grid", ".hero-actions"]) {
+    assert.doesNotMatch(cssBlock(selector), /position:\s*absolute\b/, `${selector} should flow naturally`);
+  }
+});
+
+test("hero typography and cursor are calibrated for the first viewport", () => {
+  assert.match(cssBlock("h1,\\s*h2"), /font-size:\s*clamp\(3\.2rem,\s*7\.2vw,\s*8\.5rem\)/);
+  assert.doesNotMatch(cssBlock(".hero-mask-frame"), /overflow:\s*hidden\b/);
+  assert.match(cssBlock(".cursor-orbit"), /width:\s*8px/);
+  assert.match(cssBlock(".cursor-orbit"), /height:\s*8px/);
+  assert.match(cssBlock(".cursor-orbit"), /opacity:\s*1/);
+});

@@ -3,6 +3,7 @@ import { test } from "node:test";
 
 import {
   computeFloatingPreviewPosition,
+  computeLayeredMaskPosition,
   computeMagneticTransform,
   computeMaskBounds,
   computeMaskPosition,
@@ -52,6 +53,29 @@ test("computeMaskPosition clamps the cursor to the element bounds", () => {
     y: 300,
     xCss: "0px",
     yCss: "300px",
+  });
+});
+
+test("computeLayeredMaskPosition separates clipped mask coords from stage cursor coords", () => {
+  const positions = computeLayeredMaskPosition(
+    { clientX: 640, clientY: 520 },
+    { left: 120, top: 180, width: 900, height: 420 },
+    { left: 0, top: 100, width: 1280, height: 720 },
+  );
+
+  assert.deepEqual(positions, {
+    mask: {
+      x: 520,
+      y: 340,
+      xCss: "520px",
+      yCss: "340px",
+    },
+    cursor: {
+      x: 640,
+      y: 420,
+      xCss: "640px",
+      yCss: "420px",
+    },
   });
 });
 

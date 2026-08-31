@@ -33,9 +33,12 @@ body {
 .mask-stage {
   position: relative;
   min-height: 100vh;
+  display: flex;
+  align-items: center;
   isolation: isolate;
   overflow: hidden;
   cursor: none;
+  padding: clamp(112px, 11vh, 144px) clamp(20px, 6vw, 84px) clamp(88px, 10vh, 128px);
   background:
     linear-gradient(90deg, rgba(209, 255, 72, 0.045) 1px, transparent 1px),
     linear-gradient(0deg, rgba(209, 255, 72, 0.035) 1px, transparent 1px),
@@ -81,26 +84,27 @@ body {
   border-top: 1px solid var(--line);
 }
 
-.hero {
-  position: absolute;
-  inset: 0;
+.hero-stack {
+  position: relative;
+  z-index: 3;
+  width: min(92rem, 100%);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: clamp(88px, 9vw, 132px) clamp(20px, 6vw, 84px);
+  gap: clamp(24px, 4.2vh, 44px);
+}
+
+.hero {
+  position: relative;
 }
 
 .hero-base {
   z-index: 1;
-  background:
-    radial-gradient(circle at 75% 25%, rgba(235, 235, 235, 0.08), transparent 34%),
-    var(--background);
 }
 
 .hero-mask-frame {
   position: relative;
-  width: min(82rem, 100%);
-  overflow: hidden;
+  display: block;
+  width: min(88rem, 100%);
   isolation: isolate;
 }
 
@@ -140,10 +144,10 @@ h2 {
   max-width: 82rem;
   margin: 0;
   font-family: "EB Garamond", serif;
-  font-size: clamp(4.4rem, 11vw, 12.5rem);
+  font-size: clamp(3.2rem, 7.2vw, 8.5rem);
   font-weight: 400;
   letter-spacing: 0;
-  line-height: 0.86;
+  line-height: 0.9;
 }
 
 h1 span,
@@ -174,15 +178,11 @@ h2 em {
 }
 
 .hero-grid {
-  position: absolute;
-  left: clamp(20px, 6vw, 84px);
-  bottom: clamp(152px, 15vw, 214px);
-  z-index: 6;
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 420px) minmax(0, 420px);
   gap: clamp(18px, 4vw, 64px);
   max-width: 920px;
-  margin-top: clamp(32px, 5vw, 72px);
   border-top: 1px solid currentColor;
   padding-top: 20px;
   font-size: clamp(12px, 1.2vw, 15px);
@@ -194,10 +194,7 @@ h2 em {
 }
 
 .hero-actions {
-  position: absolute;
-  left: clamp(20px, 6vw, 84px);
-  bottom: clamp(86px, 9vw, 118px);
-  z-index: 7;
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
@@ -243,12 +240,15 @@ h2 em {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 4;
-  width: 1px;
-  height: 1px;
+  z-index: 8;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--acid);
+  box-shadow: 0 0 18px rgba(209, 255, 72, 0.42);
   pointer-events: none;
   transform: translate3d(var(--mask-x), var(--mask-y), 0) translate(-50%, -50%);
-  opacity: 0;
+  opacity: 1;
 }
 
 .work-section {
@@ -424,6 +424,7 @@ h2 em {
   .mask-stage {
     min-height: 100svh;
     cursor: auto;
+    padding: 92px 18px 72px;
   }
 
   .perimeter {
@@ -436,7 +437,7 @@ h2 em {
   }
 
   .hero {
-    padding: 92px 18px;
+    width: 100%;
   }
 
   .hero-grid {
