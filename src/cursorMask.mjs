@@ -73,6 +73,16 @@ export function getMaskSizeForInteraction(state) {
   return sizes[state] ?? sizes.idle;
 }
 
+export function isMaskExpansionTarget(target) {
+  return Boolean(target?.closest?.("[data-mask-target]"));
+}
+
+export function getMaskSizeForTarget(isTarget, sizes = {}) {
+  return isTarget
+    ? (sizes.expanded ?? getMaskSizeForInteraction("expanded"))
+    : (sizes.idle ?? getMaskSizeForInteraction("idle"));
+}
+
 export function getPreviewMotionConfig() {
   return {
     ease: 0.048,
@@ -112,8 +122,6 @@ export function createCursorMaskController(root, options = {}) {
 
   const cursor = root.querySelector("[data-mask-cursor]");
   const maskSurface = root.querySelector("[data-mask-surface]") || root;
-  const compressedMaskSize =
-    options.compressedMaskSize ?? getMaskSizeForInteraction("compressed");
   const expandedMaskSize =
     options.expandedMaskSize ?? getMaskSizeForInteraction("expanded");
   const idleMaskSize = options.idleMaskSize ?? getMaskSizeForInteraction("idle");
@@ -161,15 +169,25 @@ export function createCursorMaskController(root, options = {}) {
   };
 
   const handlePointerMove = (event) => {
-    if (!isInside) setMaskSize(compressedMaskSize);
     isInside = true;
     setTargetPosition(event);
+    setMaskSize(
+      getMaskSizeForTarget(isMaskExpansionTarget(event.target), {
+        expanded: expandedMaskSize,
+        idle: idleMaskSize,
+      }),
+    );
   };
 
   const handlePointerEnter = (event) => {
     isInside = true;
     setTargetPosition(event);
-    setMaskSize(expandedMaskSize);
+    setMaskSize(
+      getMaskSizeForTarget(isMaskExpansionTarget(event.target), {
+        expanded: expandedMaskSize,
+        idle: idleMaskSize,
+      }),
+    );
     root.dataset.maskActive = "true";
   };
 

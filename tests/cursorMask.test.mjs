@@ -9,8 +9,10 @@ import {
   computePreviewTrackOffset,
   decidePreviewIndex,
   getMaskSizeForInteraction,
+  getMaskSizeForTarget,
   getPreviewMotionConfig,
   interpolatePosition,
+  isMaskExpansionTarget,
 } from "../src/cursorMask.mjs";
 
 test("computeMaskPosition returns cursor coordinates relative to an element", () => {
@@ -111,6 +113,35 @@ test("computeFloatingPreviewPosition offsets and clamps preview inside viewport"
 test("getMaskSizeForInteraction keeps the reveal away from adjacent controls", () => {
   assert.equal(getMaskSizeForInteraction("expanded"), 280);
   assert.equal(getMaskSizeForInteraction("idle"), 0);
+});
+
+test("isMaskExpansionTarget only matches explicit hero typography targets", () => {
+  assert.equal(
+    isMaskExpansionTarget({
+      closest(selector) {
+        return selector === "[data-mask-target]" ? {} : null;
+      },
+    }),
+    true,
+  );
+
+  assert.equal(
+    isMaskExpansionTarget({
+      closest(selector) {
+        return selector === "[data-magnetic]" ? {} : null;
+      },
+    }),
+    false,
+  );
+
+  assert.equal(isMaskExpansionTarget(null), false);
+});
+
+test("getMaskSizeForTarget expands only over the hero mask target", () => {
+  assert.equal(getMaskSizeForTarget(true), 280);
+  assert.equal(getMaskSizeForTarget(false), 0);
+  assert.equal(getMaskSizeForTarget(true, { expanded: 320, idle: 16 }), 320);
+  assert.equal(getMaskSizeForTarget(false, { expanded: 320, idle: 16 }), 16);
 });
 
 test("getPreviewMotionConfig uses a sticky delayed cursor-follow motion", () => {

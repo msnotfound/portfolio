@@ -97,8 +97,23 @@ body {
     var(--background);
 }
 
+.hero-mask-frame {
+  position: relative;
+  width: min(82rem, 100%);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 1;
+}
+
 .hero-reveal {
+  position: absolute;
+  inset: 0;
   z-index: 2;
+  overflow: hidden;
   color: var(--black);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(209, 255, 72, 0.96)),
@@ -196,7 +211,9 @@ h2 em {
   justify-content: center;
   border: 1px solid currentColor;
   padding: 0 20px;
+  background: rgba(10, 10, 11, 0.9);
   color: currentColor;
+  cursor: pointer;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -215,13 +232,6 @@ h2 em {
   background: var(--acid);
   border-color: var(--acid);
   color: var(--black);
-}
-
-.hero-reveal .magnetic-link:hover,
-.hero-reveal .magnetic-link:focus-visible {
-  background: var(--black);
-  border-color: var(--black);
-  color: var(--acid);
 }
 
 .primary-link {
