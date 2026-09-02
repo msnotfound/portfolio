@@ -61,6 +61,18 @@ export function computePillVisibility(heroBottom, threshold = 100) {
   };
 }
 
+export function computeRadialFloodOrigin(pillRect, floodRect) {
+  const x = pillRect.left + pillRect.width / 2 - floodRect.left;
+  const y = pillRect.top + pillRect.height / 2 - floodRect.top;
+
+  return {
+    x,
+    y,
+    xCss: `${Math.round(x)}px`,
+    yCss: `${Math.round(y)}px`,
+  };
+}
+
 export function computeMobileParallax(scrollY, viewportHeight) {
   const clampedScroll = clamp(scrollY, 0, viewportHeight);
   const y = clampedScroll * 0.18;
@@ -523,6 +535,57 @@ export function initMobileRevealPill(pillElement, maskSurface, options = {}) {
       pillElement.removeEventListener("pointerdown", startReveal);
       view.removeEventListener("pointerup", endReveal);
       view.removeEventListener("pointercancel", endReveal);
+      view.removeEventListener("scroll", updateVisibility);
+    },
+  };
+}
+
+export function initMobileRadialFlood(pillElement, floodLayer, options = {}) {
+  if (!pillElement || !floodLayer) return { destroy() {} };
+
+  const view = options.window ?? pillElement.ownerDocument?.defaultView ?? window;
+  const root = options.root ?? pillElement.ownerDocument?.querySelector(".mask-stage");
+
+  const expandWave = (event) => {
+    event?.preventDefault?.();
+    const origin = computeRadialFloodOrigin(
+      pillElement.getBoundingClientRect(),
+      floodLayer.getBoundingClientRect(),
+    );
+
+    floodLayer.style.setProperty("--pill-x", origin.xCss);
+    floodLayer.style.setProperty("--pill-y", origin.yCss);
+    floodLayer.style.setProperty("--flood-radius", options.radius ?? "150vmax");
+    pillElement.dataset.active = "true";
+    view.navigator?.vibrate?.([15, 30, 20]);
+  };
+
+  const collapseWave = () => {
+    floodLayer.style.setProperty("--flood-radius", "0px");
+    pillElement.dataset.active = "false";
+  };
+
+  const updateVisibility = () => {
+    const visibility = computePillVisibility(
+      root?.getBoundingClientRect?.().bottom ?? 0,
+      options.hideThreshold ?? 100,
+    );
+    pillElement.style.opacity = visibility.opacity;
+    pillElement.style.pointerEvents = visibility.pointerEvents;
+  };
+
+  pillElement.addEventListener("pointerdown", expandWave);
+  view.addEventListener("pointerup", collapseWave);
+  view.addEventListener("pointercancel", collapseWave);
+  view.addEventListener("scroll", updateVisibility, { passive: true });
+  collapseWave();
+  updateVisibility();
+
+  return {
+    destroy() {
+      pillElement.removeEventListener("pointerdown", expandWave);
+      view.removeEventListener("pointerup", collapseWave);
+      view.removeEventListener("pointercancel", collapseWave);
       view.removeEventListener("scroll", updateVisibility);
     },
   };

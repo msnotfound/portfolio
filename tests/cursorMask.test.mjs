@@ -10,6 +10,7 @@ import {
   computeMaskPosition,
   computeMobileParallax,
   computePillVisibility,
+  computeRadialFloodOrigin,
   computePreviewTrackOffset,
   computeTiltParallax,
   computeTouchMaskUpdate,
@@ -234,6 +235,21 @@ test("computePillVisibility hides the pill after the hero leaves the thumb zone"
     opacity: "0",
     pointerEvents: "none",
   });
+});
+
+test("computeRadialFloodOrigin uses the pill center relative to the flood layer", () => {
+  assert.deepEqual(
+    computeRadialFloodOrigin(
+      { left: 140, top: 720, width: 96, height: 96 },
+      { left: 0, top: 0 },
+    ),
+    {
+      x: 188,
+      y: 768,
+      xCss: "188px",
+      yCss: "768px",
+    },
+  );
 });
 
 test("computeMobileParallax creates a subtle hero drift and fade", () => {

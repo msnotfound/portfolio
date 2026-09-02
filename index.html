@@ -39,9 +39,18 @@
   <body>
     <div class="screen-vignette screen-vignette-top" aria-hidden="true"></div>
     <div class="screen-vignette screen-vignette-bottom" aria-hidden="true"></div>
-    <button class="mobile-reveal-pill" type="button" data-mobile-trigger aria-label="Hold to reveal under-layer">
-      <span class="pill-indicator" aria-hidden="true"></span>
-      <span class="pill-label">Hold to reveal</span>
+    <button class="mobile-reveal-pill" type="button" data-mobile-trigger aria-label="Hold to flood reveal">
+      <svg class="pill-orbit" viewBox="0 0 120 120" aria-hidden="true">
+        <defs>
+          <path id="press-orbit" d="M60,60 m-45,0 a45,45 0 1,1 90,0 a45,45 0 1,1 -90,0" />
+        </defs>
+        <text>
+          <textPath href="#press-orbit" startOffset="0">Press Here / Press Here /</textPath>
+        </text>
+      </svg>
+      <span class="pill-indicator" aria-hidden="true">
+        <span class="pill-core"></span>
+      </span>
     </button>
 
     <main class="mask-stage" data-mask-root>
@@ -104,6 +113,26 @@
             LinkedIn
           </a>
         </nav>
+      </div>
+
+      <div class="stage-reveal-flood" data-reveal-flood aria-hidden="true">
+        <div class="hero-stack reveal-theme">
+          <section class="hero">
+            <div class="hero-copy">
+              <p class="kicker">Under the surface</p>
+              <h2>
+                <span class="line-wrap"><span>Not a template.</span></span>
+                <span class="line-wrap"><span><em>A working proof</em></span></span>
+                <span class="line-wrap"><span>of taste and execution.</span></span>
+              </h2>
+            </div>
+          </section>
+
+          <div class="hero-grid">
+            <p>Tactile systems, production code, zero fluff.</p>
+            <p>Engineered for speed, taste, and reliability.</p>
+          </div>
+        </div>
       </div>
 
       <div class="perimeter perimeter-bottom" aria-hidden="true">
@@ -202,7 +231,7 @@
         createMobileParallaxController,
         createWorkPreviewController,
         enableMobileTouchReveal,
-        initMobileRevealPill,
+        initMobileRadialFlood,
       } from "./src/cursorMask.mjs";
       import { initThemeToggle } from "./src/themeToggle.mjs";
 
@@ -225,7 +254,7 @@
         enableMobileTouchReveal(root.querySelector("[data-mask-target]"), root.querySelector("[data-mask-surface]"), {
           revealSize: 220,
         });
-        initMobileRevealPill(document.querySelector("[data-mobile-trigger]"), root.querySelector("[data-mask-surface]"), {
+        initMobileRadialFlood(document.querySelector("[data-mobile-trigger]"), root.querySelector("[data-reveal-flood]"), {
           root,
         });
         createMobileParallaxController(document);

@@ -149,8 +149,9 @@ test("mobile uses touch reveal instead of forcing the alternate hero layer open"
   );
   assert.match(
     html,
-    /initMobileRevealPill\(document\.querySelector\("\[data-mobile-trigger\]"\), root\.querySelector\("\[data-mask-surface\]"\),/,
+    /initMobileRadialFlood\(document\.querySelector\("\[data-mobile-trigger\]"\), root\.querySelector\("\[data-reveal-flood\]"\),/,
   );
+  assert.match(html, /<div class="stage-reveal-flood" data-reveal-flood aria-hidden="true">/);
   assert.match(html, /createMobileParallaxController\(document\);/);
   assert.doesNotMatch(
     css,
@@ -167,14 +168,24 @@ test("mobile uses touch reveal instead of forcing the alternate hero layer open"
 test("mobile reveal pill floats at the bottom thumb zone on touch viewports", () => {
   const bodyStart = indexOfSnippet("<body>");
   const mainStart = indexOfSnippet('<main class="mask-stage" data-mask-root>');
-  const pillStart = indexOfSnippet('<button class="mobile-reveal-pill" type="button" data-mobile-trigger aria-label="Hold to reveal under-layer">');
+  const pillStart = indexOfSnippet('<button class="mobile-reveal-pill" type="button" data-mobile-trigger aria-label="Hold to flood reveal">');
 
   assert.ok(pillStart > bodyStart && pillStart < mainStart, "Expected reveal pill directly under body before content");
-  assert.match(html, /<span class="pill-indicator" aria-hidden="true"><\/span>/);
-  assert.match(html, /<span class="pill-label">Hold to reveal<\/span>/);
+  assert.match(html, /aria-label="Hold to flood reveal"/);
+  assert.match(html, /<svg class="pill-orbit" viewBox="0 0 120 120" aria-hidden="true">/);
+  assert.match(html, />Press Here \/ Press Here \/</);
+  assert.match(html, /<span class="pill-indicator" aria-hidden="true">/);
   assert.match(css, /@media\s*\(max-width:\s*760px\),\s*\(pointer:\s*coarse\)\s*\{[\s\S]*?\.mobile-reveal-pill\s*\{/);
   assert.match(css, /bottom:\s*28px/);
-  assert.match(css, /backdrop-filter:\s*blur\(16px\)/);
+  assert.match(css, /width:\s*92px/);
+  assert.match(css, /height:\s*92px/);
+  assert.match(css, /animation:\s*pill-orbit-spin/);
+});
+
+test("radial flood layer expands from the mobile pill origin", () => {
+  assert.match(cssBlock(".stage-reveal-flood"), /clip-path:\s*circle\(var\(--flood-radius,\s*0px\) at var\(--pill-x,\s*50vw\) var\(--pill-y,\s*90vh\)\)/);
+  assert.match(cssBlock(".stage-reveal-flood"), /transition:\s*clip-path 560ms cubic-bezier\(0\.19,\s*1,\s*0\.22,\s*1\)/);
+  assert.match(css, /\.mobile-reveal-pill\[data-active="true"\]\s*\{[\s\S]*?box-shadow:\s*0 0 40px/);
 });
 
 test("mobile touch viewports hide the custom cursor follower", () => {

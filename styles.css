@@ -15,6 +15,9 @@
   --cursor-glow: rgba(209, 255, 72, 0.42);
   --cursor-glow-strong: rgba(209, 255, 72, 0.54);
   --edge-vignette-mid: rgba(10, 10, 11, 0.86);
+  --flood-radius: 0px;
+  --pill-x: 50vw;
+  --pill-y: 90vh;
   --mask-x: 50vw;
   --mask-y: 50vh;
   --mask-size: 0px;
@@ -126,6 +129,37 @@ body {
 
 .mobile-reveal-pill {
   display: none;
+}
+
+.stage-reveal-flood {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: clamp(112px, 11vh, 144px) clamp(20px, 6vw, 84px) clamp(88px, 10vh, 128px);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.38), color-mix(in srgb, var(--acid) 84%, white 16%)),
+    var(--acid);
+  color: var(--black);
+  clip-path: circle(var(--flood-radius, 0px) at var(--pill-x, 50vw) var(--pill-y, 90vh));
+  pointer-events: none;
+  transition: clip-path 560ms cubic-bezier(0.19, 1, 0.22, 1);
+  will-change: clip-path;
+}
+
+.stage-reveal-flood .reveal-theme {
+  color: var(--black);
+}
+
+.stage-reveal-flood .kicker {
+  opacity: 0.72;
+}
+
+.stage-reveal-flood .hero-grid {
+  border-top-color: color-mix(in srgb, var(--black) 34%, transparent);
+  color: color-mix(in srgb, var(--black) 86%, transparent);
 }
 
 .perimeter {
@@ -651,13 +685,13 @@ h2 em {
     bottom: 28px;
     left: 50%;
     z-index: 90;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    min-height: 46px;
-    padding: 12px 24px;
+    display: grid;
+    place-items: center;
+    width: 92px;
+    height: 92px;
+    padding: 0;
     border: 1px solid var(--line);
-    border-radius: 999px;
+    border-radius: 50%;
     background: color-mix(in srgb, var(--surface) 85%, transparent);
     box-shadow:
       0 12px 36px rgba(0, 0, 0, 0.42),
@@ -666,10 +700,6 @@ h2 em {
     -webkit-backdrop-filter: blur(16px);
     color: var(--text);
     font: inherit;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
     touch-action: none;
     user-select: none;
     -webkit-user-select: none;
@@ -682,12 +712,35 @@ h2 em {
       opacity 250ms ease;
   }
 
+  .pill-orbit {
+    position: absolute;
+    inset: 4px;
+    width: calc(100% - 8px);
+    height: calc(100% - 8px);
+    animation: pill-orbit-spin 10s linear infinite;
+    overflow: visible;
+  }
+
+  .pill-orbit text {
+    fill: currentColor;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
   .pill-indicator {
-    width: 7px;
-    height: 7px;
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid currentColor;
     border-radius: 50%;
-    background: var(--acid);
-    box-shadow: 0 0 10px var(--acid);
+    background: color-mix(in srgb, var(--acid) 12%, transparent);
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--acid) 22%, transparent),
+      0 0 18px color-mix(in srgb, var(--acid) 46%, transparent);
     transition:
       background 180ms ease,
       box-shadow 180ms ease,
@@ -696,16 +749,35 @@ h2 em {
 
   .mobile-reveal-pill:active,
   .mobile-reveal-pill[data-active="true"] {
-    border-color: var(--acid);
-    background: var(--acid);
-    color: var(--black);
-    transform: translateX(-50%) scale(0.94);
+    border-color: var(--black);
+    background: var(--black);
+    color: var(--acid);
+    box-shadow: 0 0 40px color-mix(in srgb, var(--acid) 60%, transparent);
+    transform: translateX(-50%) scale(0.92);
   }
 
   .mobile-reveal-pill[data-active="true"] .pill-indicator {
-    background: var(--black);
+    background: color-mix(in srgb, var(--acid) 18%, transparent);
     box-shadow: none;
-    transform: scale(1.35);
+    transform: scale(0.92);
+  }
+
+  .pill-core {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow:
+      0 -10px 0 -4px currentColor,
+      0 10px 0 -4px currentColor,
+      -10px 0 0 -4px currentColor,
+      10px 0 0 -4px currentColor;
+  }
+}
+
+@keyframes pill-orbit-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -726,6 +798,11 @@ h2 em {
     clip-path: circle(0 at 50% 50%);
   }
 
+  .stage-reveal-flood {
+    clip-path: circle(0 at 50% 50%);
+    transition: none;
+  }
+
   .cursor-orbit {
     display: none;
   }
@@ -741,5 +818,9 @@ h2 em {
 
   .work-preview {
     display: none;
+  }
+
+  .pill-orbit {
+    animation: none;
   }
 }
