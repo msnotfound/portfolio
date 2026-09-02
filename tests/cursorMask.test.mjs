@@ -7,7 +7,10 @@ import {
   computeMagneticTransform,
   computeMaskBounds,
   computeMaskPosition,
+  computeMobileParallax,
   computePreviewTrackOffset,
+  computeTiltParallax,
+  computeTouchMaskUpdate,
   decidePreviewIndex,
   getMaskSizeForInteraction,
   getMaskSizeForTarget,
@@ -181,6 +184,61 @@ test("computePreviewTrackOffset scrolls the preview track by item height plus ga
   assert.deepEqual(computePreviewTrackOffset(2, 342, 84), {
     y: -852,
     css: "translate3d(0, -852px, 0)",
+  });
+});
+
+test("computeTouchMaskUpdate positions a mobile reveal under the active touch", () => {
+  const update = computeTouchMaskUpdate(
+    {
+      touches: [{ clientX: 420, clientY: 260 }],
+    },
+    { left: 120, top: 80, width: 600, height: 420 },
+    220,
+  );
+
+  assert.deepEqual(update, {
+    x: 300,
+    y: 180,
+    xCss: "300px",
+    yCss: "180px",
+    sizeCss: "220px",
+  });
+});
+
+test("computeTouchMaskUpdate returns null without an active touch", () => {
+  assert.equal(
+    computeTouchMaskUpdate({ touches: [] }, { left: 0, top: 0, width: 100, height: 100 }),
+    null,
+  );
+});
+
+test("computeMobileParallax creates a subtle hero drift and fade", () => {
+  assert.deepEqual(computeMobileParallax(200, 800), {
+    y: 36,
+    opacity: 0.6666666666666667,
+    css: "translate3d(0, 36px, 0)",
+  });
+});
+
+test("computeMobileParallax clamps after the first viewport", () => {
+  assert.deepEqual(computeMobileParallax(900, 800), {
+    y: 144,
+    opacity: 0,
+    css: "translate3d(0, 144px, 0)",
+  });
+});
+
+test("computeTiltParallax converts phone tilt into small offsets", () => {
+  assert.deepEqual(computeTiltParallax({ gamma: 15, beta: 60 }, 12), {
+    x: 6,
+    y: 6,
+    css: "translate3d(6px, 6px, 0)",
+  });
+
+  assert.deepEqual(computeTiltParallax({ gamma: 90, beta: -40 }, 12), {
+    x: 12,
+    y: -12,
+    css: "translate3d(12px, -12px, 0)",
   });
 });
 

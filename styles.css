@@ -14,6 +14,7 @@
   --button-bg: rgba(10, 10, 11, 0.9);
   --cursor-glow: rgba(209, 255, 72, 0.42);
   --cursor-glow-strong: rgba(209, 255, 72, 0.54);
+  --edge-vignette-mid: rgba(10, 10, 11, 0.86);
   --mask-x: 50vw;
   --mask-y: 50vh;
   --mask-size: 0px;
@@ -38,6 +39,7 @@
   --button-bg: rgba(255, 255, 255, 0.86);
   --cursor-glow: rgba(0, 51, 255, 0.32);
   --cursor-glow-strong: rgba(0, 51, 255, 0.46);
+  --edge-vignette-mid: rgba(244, 244, 240, 0.88);
   color-scheme: light;
 }
 
@@ -91,6 +93,35 @@ body {
   opacity: var(--grain-opacity);
   mix-blend-mode: soft-light;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+.stage-vignette {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  height: clamp(64px, 12vh, 110px);
+  pointer-events: none;
+}
+
+.stage-vignette-top {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--background) 0%,
+    var(--edge-vignette-mid) 45%,
+    transparent 100%
+  );
+}
+
+.stage-vignette-bottom {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    var(--background) 0%,
+    var(--edge-vignette-mid) 45%,
+    transparent 100%
+  );
 }
 
 .perimeter {
@@ -219,6 +250,9 @@ body {
   display: block;
   width: min(88rem, 100%);
   isolation: isolate;
+  transform: var(--tilt-transform, translate3d(0, 0, 0));
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
 }
 
 .hero-copy {
@@ -550,6 +584,7 @@ h2 em {
     min-height: 100svh;
     cursor: auto;
     padding: 92px 18px 72px;
+    overflow: visible;
   }
 
   .perimeter {
@@ -590,6 +625,7 @@ h2 em {
     grid-template-columns: 44px 1fr;
     gap: 12px;
     min-height: 104px;
+    will-change: transform;
   }
 
   .work-list small {
@@ -601,7 +637,7 @@ h2 em {
   }
 }
 
-@media (prefers-reduced-motion: reduce), (pointer: coarse) {
+@media (prefers-reduced-motion: reduce) {
   html,
   body,
   a,
@@ -615,7 +651,7 @@ h2 em {
   }
 
   .hero-reveal {
-    clip-path: circle(100vmax at 50% 50%);
+    clip-path: circle(0 at 50% 50%);
   }
 
   .cursor-orbit {

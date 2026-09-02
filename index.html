@@ -39,6 +39,8 @@
   <body>
     <main class="mask-stage" data-mask-root>
       <div class="grain" aria-hidden="true"></div>
+      <div class="stage-vignette stage-vignette-top" aria-hidden="true"></div>
+      <div class="stage-vignette stage-vignette-bottom" aria-hidden="true"></div>
       <div class="perimeter perimeter-top" aria-hidden="true">
         <span>Mayank Sahu</span>
         <span>AI systems / automation / research artifacts</span>
@@ -192,27 +194,35 @@
       import {
         createCursorMaskController,
         createMagneticButtonController,
+        createMobileParallaxController,
         createWorkPreviewController,
+        enableMobileTouchReveal,
       } from "./src/cursorMask.mjs";
       import { initThemeToggle } from "./src/themeToggle.mjs";
 
       const root = document.querySelector("[data-mask-root]");
       const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
 
       initThemeToggle(document);
 
-      if (root && !prefersReducedMotion && window.PointerEvent) {
+      if (root && !prefersReducedMotion && !isCoarsePointer && window.PointerEvent) {
         createCursorMaskController(root, {
           ease: 0.16,
         });
       } else if (root) {
-        root.dataset.maskActive = "true";
-        root.style.setProperty("--mask-size", "100vmax");
-        root.style.setProperty("--mask-x", "50vw");
-        root.style.setProperty("--mask-y", "50vh");
+        root.dataset.maskActive = "false";
+        root.querySelector("[data-mask-surface]")?.style.setProperty("--mask-size", "0px");
       }
 
-      if (!prefersReducedMotion && window.PointerEvent) {
+      if (root && !prefersReducedMotion && isCoarsePointer) {
+        enableMobileTouchReveal(root.querySelector("[data-mask-target]"), root.querySelector("[data-mask-surface]"), {
+          revealSize: 220,
+        });
+        createMobileParallaxController(document);
+      }
+
+      if (!prefersReducedMotion && !isCoarsePointer && window.PointerEvent) {
         createMagneticButtonController(document);
         createWorkPreviewController(document);
       }

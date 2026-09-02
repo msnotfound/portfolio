@@ -22,6 +22,52 @@ export function computeLayeredMaskPosition(pointerEvent, maskRect) {
   };
 }
 
+export function computeTouchMaskUpdate(touchEvent, rect, revealSize = 220) {
+  const touch = touchEvent.touches?.[0];
+  if (!touch) return null;
+
+  const position = computeMaskPosition(
+    {
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+    },
+    rect,
+  );
+
+  return {
+    x: position.x,
+    y: position.y,
+    xCss: position.xCss,
+    yCss: position.yCss,
+    sizeCss: `${revealSize}px`,
+  };
+}
+
+export function computeMobileParallax(scrollY, viewportHeight) {
+  const clampedScroll = clamp(scrollY, 0, viewportHeight);
+  const y = clampedScroll * 0.18;
+  const opacity = clamp(1 - scrollY / (viewportHeight * 0.75), 0, 1);
+
+  return {
+    y,
+    opacity,
+    css: `translate3d(0, ${Math.round(y)}px, 0)`,
+  };
+}
+
+export function computeTiltParallax(orientationEvent, maxOffset = 12) {
+  const gamma = clamp(orientationEvent.gamma || 0, -30, 30);
+  const beta = clamp((orientationEvent.beta || 0) - 45, -30, 30);
+  const x = Math.round((gamma / 30) * maxOffset);
+  const y = Math.round((beta / 30) * maxOffset);
+
+  return {
+    x,
+    y,
+    css: `translate3d(${x}px, ${y}px, 0)`,
+  };
+}
+
 export function computeMaskBounds(viewport, inset) {
   return {
     left: inset.left,
@@ -366,6 +412,106 @@ export function createWorkPreviewController(root = document, options = {}) {
       list.removeEventListener("pointermove", handleMove);
       list.removeEventListener("pointerleave", handleLeave);
       if (animationFrame) cancelAnimationFrame(animationFrame);
+    },
+  };
+}
+
+export function enableMobileTouchReveal(maskTarget, maskSurface, options = {}) {
+  if (!maskTarget || !maskSurface) return { destroy() {} };
+
+  const revealSize = options.revealSize ?? 220;
+
+  const setMaskUpdate = (event) => {
+    const update = computeTouchMaskUpdate(
+      event,
+      maskSurface.getBoundingClientRect(),
+      revealSize,
+    );
+    if (!update) return;
+
+    maskSurface.style.setProperty("--mask-x", update.xCss);
+    maskSurface.style.setProperty("--mask-y", update.yCss);
+    maskSurface.style.setProperty("--mask-size", update.sizeCss);
+  };
+
+  const collapseMask = () => {
+    maskSurface.style.setProperty("--mask-size", "0px");
+  };
+
+  maskTarget.addEventListener("touchstart", setMaskUpdate, { passive: true });
+  maskTarget.addEventListener("touchmove", setMaskUpdate, { passive: true });
+  maskTarget.addEventListener("touchend", collapseMask, { passive: true });
+  maskTarget.addEventListener("touchcancel", collapseMask, { passive: true });
+  collapseMask();
+
+  return {
+    destroy() {
+      maskTarget.removeEventListener("touchstart", setMaskUpdate);
+      maskTarget.removeEventListener("touchmove", setMaskUpdate);
+      maskTarget.removeEventListener("touchend", collapseMask);
+      maskTarget.removeEventListener("touchcancel", collapseMask);
+    },
+  };
+}
+
+export function createMobileParallaxController(root = document, options = {}) {
+  const view = root.defaultView ?? window;
+  const heroStack = root.querySelector(".hero-stack");
+  const maskStage = root.querySelector(".mask-stage");
+  const maskFrame = root.querySelector(".hero-mask-frame");
+  const workItems = [...root.querySelectorAll(".work-list a")];
+  if (!heroStack && !maskStage && !maskFrame && workItems.length === 0) {
+    return { destroy() {} };
+  }
+
+  let ticking = false;
+
+  const renderScroll = () => {
+    ticking = false;
+    const parallax = computeMobileParallax(view.scrollY || 0, view.innerHeight || 1);
+
+    if (heroStack) {
+      heroStack.style.transform = parallax.css;
+      heroStack.style.opacity = parallax.opacity.toFixed(3);
+    }
+
+    if (maskStage) {
+      maskStage.style.backgroundPosition = `0 ${Math.round(parallax.y * -0.35)}px`;
+    }
+
+    workItems.forEach((item, index) => {
+      const drift = Math.round((parallax.y * 0.08) * ((index % 2 === 0) ? 1 : -1));
+      item.style.transform = `translate3d(0, ${drift}px, 0)`;
+    });
+  };
+
+  const handleScroll = () => {
+    if (!ticking) {
+      ticking = true;
+      view.requestAnimationFrame(renderScroll);
+    }
+  };
+
+  const handleTilt = (event) => {
+    if (!maskFrame) return;
+    maskFrame.style.setProperty("--tilt-transform", computeTiltParallax(event).css);
+  };
+
+  view.addEventListener("scroll", handleScroll, { passive: true });
+
+  if (
+    view.DeviceOrientationEvent &&
+    typeof view.DeviceOrientationEvent.requestPermission !== "function"
+  ) {
+    view.addEventListener("deviceorientation", handleTilt, { passive: true });
+  }
+
+  renderScroll();
+
+  return {
+    destroy() {
+      view.removeEventListener("scroll", handleScroll);
+      view.removeEventListener("deviceorientation", handleTilt);
     },
   };
 }

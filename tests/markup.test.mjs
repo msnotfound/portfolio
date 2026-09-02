@@ -134,3 +134,22 @@ test("page exposes a persistent theme toggle", () => {
   assert.match(css, /\[data-theme="light"\]\s*\{/);
   assert.match(cssBlock(".theme-toggle"), /border-radius:\s*999px/);
 });
+
+test("mobile uses touch reveal instead of forcing the alternate hero layer open", () => {
+  assert.match(html, /<div class="stage-vignette stage-vignette-top" aria-hidden="true"><\/div>/);
+  assert.match(html, /<div class="stage-vignette stage-vignette-bottom" aria-hidden="true"><\/div>/);
+  assert.match(
+    html,
+    /enableMobileTouchReveal\(root\.querySelector\("\[data-mask-target\]"\), root\.querySelector\("\[data-mask-surface\]"\),/,
+  );
+  assert.match(html, /createMobileParallaxController\(document\);/);
+  assert.doesNotMatch(
+    css,
+    /@media\s*\([^)]*pointer:\s*coarse[^}]*\.hero-reveal[\s\S]*?circle\(100vmax/,
+  );
+  assert.doesNotMatch(
+    html,
+    /root\.style\.setProperty\("--mask-size",\s*"100vmax"\)/,
+  );
+  assert.match(cssBlock(".stage-vignette"), /position:\s*fixed/);
+});
