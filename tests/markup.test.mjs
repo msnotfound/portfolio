@@ -4,6 +4,7 @@ import test from "node:test";
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
+const cursorMaskSource = readFileSync(new URL("../src/cursorMask.mjs", import.meta.url), "utf8");
 
 function indexOfSnippet(snippet) {
   const index = html.indexOf(snippet);
@@ -198,6 +199,8 @@ test("mobile reveal pill floats at the bottom thumb zone on touch viewports", ()
   assert.match(css, /width:\s*92px/);
   assert.match(css, /height:\s*92px/);
   assert.match(css, /animation:\s*pill-orbit-spin/);
+  assert.match(css, /\.mobile-reveal-pill\s*\{[\s\S]*?position:\s*fixed/);
+  assert.match(css, /\.mobile-reveal-pill\s*\{[\s\S]*?pointer-events:\s*auto/);
 });
 
 test("radial flood layer expands from the mobile pill origin", () => {
@@ -227,4 +230,22 @@ test("mobile touch viewports lock the headline hover reveal closed", () => {
     mobileMedia,
     /\.hero-reveal\s*\{[\s\S]*?clip-path:\s*circle\(0px at 50% 50%\) !important;[\s\S]*?pointer-events:\s*none/,
   );
+});
+
+test("radial reveal trigger does not auto-hide on scroll", () => {
+  const radialStart = cursorMaskSource.indexOf("export function initMobileRadialFlood");
+  const parallaxStart = cursorMaskSource.indexOf("export function createMobileParallaxController");
+  assert.notEqual(radialStart, -1, "Expected radial flood controller");
+  assert.notEqual(parallaxStart, -1, "Expected mobile parallax controller");
+  const radialController = cursorMaskSource.slice(radialStart, parallaxStart);
+
+  assert.doesNotMatch(radialController, /scroll/);
+  assert.doesNotMatch(radialController, /computePillVisibility/);
+  assert.doesNotMatch(radialController, /pointerEvents\s*=\s*visibility\.pointerEvents/);
+});
+
+test("top perimeter name stays pinned above viewport overlays", () => {
+  assert.match(cssBlock(".perimeter"), /position:\s*fixed/);
+  assert.match(cssBlock(".perimeter"), /z-index:\s*80/);
+  assert.match(cssBlock(".perimeter-top"), /top:\s*24px/);
 });

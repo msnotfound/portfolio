@@ -548,7 +548,6 @@ export function initMobileRadialFlood(pillElement, floodLayer, options = {}) {
   if (!pillElement || !floodLayer) return { destroy() {} };
 
   const view = options.window ?? pillElement.ownerDocument?.defaultView ?? window;
-  const root = options.root ?? pillElement.ownerDocument?.querySelector(".mask-stage");
   const holdDelay = options.holdDelay ?? 380;
   const collapseDelay = options.collapseDelay ?? 140;
   let holdTimer = 0;
@@ -592,28 +591,16 @@ export function initMobileRadialFlood(pillElement, floodLayer, options = {}) {
     }, collapseDelay);
   };
 
-  const updateVisibility = () => {
-    const visibility = computePillVisibility(
-      root?.getBoundingClientRect?.().bottom ?? 0,
-      options.hideThreshold ?? 100,
-    );
-    pillElement.style.opacity = visibility.opacity;
-    pillElement.style.pointerEvents = visibility.pointerEvents;
-  };
-
   pillElement.addEventListener("pointerdown", queueWave);
   view.addEventListener("pointerup", collapseWave);
   view.addEventListener("pointercancel", collapseWave);
-  view.addEventListener("scroll", updateVisibility, { passive: true });
   collapseWave();
-  updateVisibility();
 
   return {
     destroy() {
       pillElement.removeEventListener("pointerdown", queueWave);
       view.removeEventListener("pointerup", collapseWave);
       view.removeEventListener("pointercancel", collapseWave);
-      view.removeEventListener("scroll", updateVisibility);
       view.clearTimeout?.(holdTimer);
       view.clearTimeout?.(collapseTimer);
     },

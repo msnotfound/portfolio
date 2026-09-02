@@ -174,7 +174,7 @@ body {
   position: fixed;
   left: 24px;
   right: 24px;
-  z-index: 5;
+  z-index: 80;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -745,6 +745,8 @@ h2 em {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     color: var(--text);
+    opacity: 1;
+    pointer-events: auto;
     font: inherit;
     touch-action: none;
     user-select: none;
