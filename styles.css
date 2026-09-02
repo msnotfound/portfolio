@@ -328,6 +328,7 @@ body {
   position: relative;
   display: block;
   width: min(88rem, 100%);
+  overflow: visible;
   isolation: isolate;
   transform: var(--tilt-transform, translate3d(0, 0, 0));
   transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -341,9 +342,10 @@ body {
 
 .hero-reveal {
   position: absolute;
-  inset: 0;
+  inset: -150px -200px;
   z-index: 2;
-  overflow: hidden;
+  padding: 150px 200px;
+  overflow: visible;
   color: var(--black);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.38), color-mix(in srgb, var(--acid) 84%, white 16%)),

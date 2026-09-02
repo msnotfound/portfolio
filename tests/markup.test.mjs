@@ -102,6 +102,16 @@ test("hero typography and cursor are calibrated for the first viewport", () => {
   assert.match(cssBlock(".cursor-orbit"), /opacity:\s*1/);
 });
 
+test("hero reveal surface has bleed room so the spotlight stays circular near text edges", () => {
+  const frameBlock = cssBlock(".hero-mask-frame");
+  const revealBlock = cssBlock(".hero-reveal");
+
+  assert.match(frameBlock, /overflow:\s*visible/);
+  assert.match(revealBlock, /inset:\s*-150px -200px/);
+  assert.match(revealBlock, /padding:\s*150px 200px/);
+  assert.match(revealBlock, /overflow:\s*visible/);
+});
+
 test("cursor follower is global and fixed above all page sections", () => {
   const mainStart = indexOfSnippet('<main class="mask-stage" data-mask-root>');
   const mainEnd = findMatchingCloseTag(mainStart, "main");
