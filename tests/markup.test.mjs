@@ -147,6 +147,7 @@ test("page exposes a persistent theme toggle", () => {
   assert.match(html, /import \{ initThemeToggle \} from "\.\/src\/themeToggle\.mjs";/);
   assert.match(html, /initThemeToggle\(document\);/);
   assert.match(css, /\[data-theme="light"\]\s*\{/);
+  assert.match(cssBlock(".theme-toggle"), /top:\s*76px/);
   assert.match(cssBlock(".theme-toggle"), /border-radius:\s*999px/);
   assert.match(html, /<svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" aria-hidden="true">/);
   assert.match(html, /<svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" aria-hidden="true">/);
@@ -162,6 +163,11 @@ test("page exposes a persistent theme toggle", () => {
   assert.match(
     css,
     /\[data-theme="light"\]\s+\.theme-toggle__sun\s*\{[\s\S]*?box-shadow:\s*0 0 16px var\(--theme-toggle-glow\)/,
+  );
+  assert.match(
+    css,
+    /@media\s*\(max-width:\s*760px\)[\s\S]*?\.theme-toggle\s*\{[\s\S]*?top:\s*76px/,
+    "Expected mobile theme toggle to keep the same gap below the top perimeter",
   );
 });
 

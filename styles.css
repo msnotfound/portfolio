@@ -204,7 +204,7 @@ body {
 
 .theme-toggle {
   position: fixed;
-  top: 56px;
+  top: 76px;
   right: 24px;
   z-index: 8;
   width: 56px;
@@ -679,7 +679,7 @@ h2 em {
   }
 
   .theme-toggle {
-    top: 48px;
+    top: 76px;
     right: 16px;
   }
 
