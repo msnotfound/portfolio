@@ -260,6 +260,10 @@ test("radial reveal trigger does not auto-hide on scroll", () => {
 
 test("top perimeter name stays pinned above viewport overlays", () => {
   assert.match(cssBlock(".perimeter"), /position:\s*fixed/);
-  assert.match(cssBlock(".perimeter"), /z-index:\s*80/);
+  assert.match(cssBlock(".perimeter"), /z-index:\s*120/);
+  assert.match(cssBlock(".perimeter"), /color:\s*var\(--text\)/);
+  assert.match(cssBlock(".perimeter"), /text-shadow:\s*0 0 18px var\(--background\)/);
   assert.match(cssBlock(".perimeter-top"), /top:\s*24px/);
+  assert.match(cssBlock(".perimeter-top"), /background:\s*color-mix\(in srgb,\s*var\(--background\) 78%, transparent\)/);
+  assert.match(cssBlock(".perimeter-top"), /backdrop-filter:\s*blur\(14px\)/);
 });
