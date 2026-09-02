@@ -137,6 +137,17 @@ test("page exposes a persistent theme toggle", () => {
   assert.match(html, /<svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" aria-hidden="true">/);
   assert.match(cssBlock(".theme-icon"), /stroke:\s*currentColor/);
   assert.doesNotMatch(cssBlock(".theme-toggle__sun"), /linear-gradient/);
+  assert.match(css, /--theme-toggle-accent:\s*#d1ff48/);
+  assert.match(css, /--theme-toggle-glow:\s*rgba\(209,\s*255,\s*72,\s*0\.5\)/);
+  assert.match(css, /--theme-toggle-accent:\s*#0033ff/);
+  assert.match(css, /--theme-toggle-glow:\s*rgba\(0,\s*51,\s*255,\s*0\.42\)/);
+  assert.match(cssBlock(".theme-toggle"), /inset 0 0 0 2px color-mix\(in srgb,\s*var\(--theme-toggle-accent\) 24%, transparent\)/);
+  assert.match(cssBlock(".theme-toggle"), /0 0 18px color-mix\(in srgb,\s*var\(--theme-toggle-glow\) 48%, transparent\)/);
+  assert.match(css, /\.theme-toggle__moon\s*\{[\s\S]*?box-shadow:\s*0 0 16px var\(--theme-toggle-glow\)/);
+  assert.match(
+    css,
+    /\[data-theme="light"\]\s+\.theme-toggle__sun\s*\{[\s\S]*?box-shadow:\s*0 0 16px var\(--theme-toggle-glow\)/,
+  );
 });
 
 test("mobile uses touch reveal instead of forcing the alternate hero layer open", () => {
