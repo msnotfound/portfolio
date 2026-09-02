@@ -6,8 +6,10 @@ import {
   computeLayeredMaskPosition,
   computeMagneticTransform,
   computeMaskBounds,
+  computeCenteredRevealMask,
   computeMaskPosition,
   computeMobileParallax,
+  computePillVisibility,
   computePreviewTrackOffset,
   computeTiltParallax,
   computeTouchMaskUpdate,
@@ -210,6 +212,28 @@ test("computeTouchMaskUpdate returns null without an active touch", () => {
     computeTouchMaskUpdate({ touches: [] }, { left: 0, top: 0, width: 100, height: 100 }),
     null,
   );
+});
+
+test("computeCenteredRevealMask expands from the center of the mask surface", () => {
+  assert.deepEqual(computeCenteredRevealMask({ width: 320, height: 180 }, 1.5), {
+    xCss: "160px",
+    yCss: "90px",
+    sizeCss: "480px",
+  });
+});
+
+test("computePillVisibility hides the pill after the hero leaves the thumb zone", () => {
+  assert.deepEqual(computePillVisibility(160), {
+    isVisible: true,
+    opacity: "1",
+    pointerEvents: "auto",
+  });
+
+  assert.deepEqual(computePillVisibility(80), {
+    isVisible: false,
+    opacity: "0",
+    pointerEvents: "none",
+  });
 });
 
 test("computeMobileParallax creates a subtle hero drift and fade", () => {

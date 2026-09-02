@@ -136,11 +136,20 @@ test("page exposes a persistent theme toggle", () => {
 });
 
 test("mobile uses touch reveal instead of forcing the alternate hero layer open", () => {
-  assert.match(html, /<div class="stage-vignette stage-vignette-top" aria-hidden="true"><\/div>/);
-  assert.match(html, /<div class="stage-vignette stage-vignette-bottom" aria-hidden="true"><\/div>/);
+  const bodyStart = indexOfSnippet("<body>");
+  const mainStart = indexOfSnippet('<main class="mask-stage" data-mask-root>');
+  const topVignette = indexOfSnippet('<div class="screen-vignette screen-vignette-top" aria-hidden="true"></div>');
+  const bottomVignette = indexOfSnippet('<div class="screen-vignette screen-vignette-bottom" aria-hidden="true"></div>');
+
+  assert.ok(topVignette > bodyStart && topVignette < mainStart, "Expected top vignette at body level");
+  assert.ok(bottomVignette > bodyStart && bottomVignette < mainStart, "Expected bottom vignette at body level");
   assert.match(
     html,
     /enableMobileTouchReveal\(root\.querySelector\("\[data-mask-target\]"\), root\.querySelector\("\[data-mask-surface\]"\),/,
+  );
+  assert.match(
+    html,
+    /initMobileRevealPill\(document\.querySelector\("\[data-mobile-trigger\]"\), root\.querySelector\("\[data-mask-surface\]"\),/,
   );
   assert.match(html, /createMobileParallaxController\(document\);/);
   assert.doesNotMatch(
@@ -151,5 +160,19 @@ test("mobile uses touch reveal instead of forcing the alternate hero layer open"
     html,
     /root\.style\.setProperty\("--mask-size",\s*"100vmax"\)/,
   );
-  assert.match(cssBlock(".stage-vignette"), /position:\s*fixed/);
+  assert.match(cssBlock(".screen-vignette"), /position:\s*fixed/);
+  assert.match(cssBlock(".mobile-reveal-pill"), /display:\s*none/);
+});
+
+test("mobile reveal pill floats at the bottom thumb zone on touch viewports", () => {
+  const bodyStart = indexOfSnippet("<body>");
+  const mainStart = indexOfSnippet('<main class="mask-stage" data-mask-root>');
+  const pillStart = indexOfSnippet('<button class="mobile-reveal-pill" type="button" data-mobile-trigger aria-label="Hold to reveal under-layer">');
+
+  assert.ok(pillStart > bodyStart && pillStart < mainStart, "Expected reveal pill directly under body before content");
+  assert.match(html, /<span class="pill-indicator" aria-hidden="true"><\/span>/);
+  assert.match(html, /<span class="pill-label">Hold to reveal<\/span>/);
+  assert.match(css, /@media\s*\(max-width:\s*760px\),\s*\(pointer:\s*coarse\)\s*\{[\s\S]*?\.mobile-reveal-pill\s*\{/);
+  assert.match(css, /bottom:\s*28px/);
+  assert.match(css, /backdrop-filter:\s*blur\(16px\)/);
 });

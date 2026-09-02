@@ -95,16 +95,16 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.55'/%3E%3C/svg%3E");
 }
 
-.stage-vignette {
+.screen-vignette {
   position: fixed;
   left: 0;
   right: 0;
-  z-index: 4;
+  z-index: 8;
   height: clamp(64px, 12vh, 110px);
   pointer-events: none;
 }
 
-.stage-vignette-top {
+.screen-vignette-top {
   top: 0;
   background: linear-gradient(
     to bottom,
@@ -114,7 +114,7 @@ body {
   );
 }
 
-.stage-vignette-bottom {
+.screen-vignette-bottom {
   bottom: 0;
   background: linear-gradient(
     to top,
@@ -122,6 +122,10 @@ body {
     var(--edge-vignette-mid) 45%,
     transparent 100%
   );
+}
+
+.mobile-reveal-pill {
+  display: none;
 }
 
 .perimeter {
@@ -634,6 +638,70 @@ h2 em {
 
   .work-preview {
     display: none;
+  }
+}
+
+@media (max-width: 760px), (pointer: coarse) {
+  .mobile-reveal-pill {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    z-index: 90;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 46px;
+    padding: 12px 24px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface) 85%, transparent);
+    box-shadow:
+      0 12px 36px rgba(0, 0, 0, 0.42),
+      0 0 0 1px color-mix(in srgb, var(--text) 6%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: var(--text);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    transform: translateX(-50%);
+    transition:
+      transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+      background 180ms ease,
+      border-color 180ms ease,
+      color 180ms ease,
+      opacity 250ms ease;
+  }
+
+  .pill-indicator {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--acid);
+    box-shadow: 0 0 10px var(--acid);
+    transition:
+      background 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease;
+  }
+
+  .mobile-reveal-pill:active,
+  .mobile-reveal-pill[data-active="true"] {
+    border-color: var(--acid);
+    background: var(--acid);
+    color: var(--black);
+    transform: translateX(-50%) scale(0.94);
+  }
+
+  .mobile-reveal-pill[data-active="true"] .pill-indicator {
+    background: var(--black);
+    box-shadow: none;
+    transform: scale(1.35);
   }
 }
 

@@ -43,6 +43,24 @@ export function computeTouchMaskUpdate(touchEvent, rect, revealSize = 220) {
   };
 }
 
+export function computeCenteredRevealMask(rect, scale = 1.5) {
+  return {
+    xCss: `${Math.round(rect.width / 2)}px`,
+    yCss: `${Math.round(rect.height / 2)}px`,
+    sizeCss: `${Math.round(Math.max(rect.width, rect.height) * scale)}px`,
+  };
+}
+
+export function computePillVisibility(heroBottom, threshold = 100) {
+  const isVisible = heroBottom >= threshold;
+
+  return {
+    isVisible,
+    opacity: isVisible ? "1" : "0",
+    pointerEvents: isVisible ? "auto" : "none",
+  };
+}
+
 export function computeMobileParallax(scrollY, viewportHeight) {
   const clampedScroll = clamp(scrollY, 0, viewportHeight);
   const y = clampedScroll * 0.18;
@@ -450,6 +468,62 @@ export function enableMobileTouchReveal(maskTarget, maskSurface, options = {}) {
       maskTarget.removeEventListener("touchmove", setMaskUpdate);
       maskTarget.removeEventListener("touchend", collapseMask);
       maskTarget.removeEventListener("touchcancel", collapseMask);
+    },
+  };
+}
+
+export function initMobileRevealPill(pillElement, maskSurface, options = {}) {
+  if (!pillElement || !maskSurface) return { destroy() {} };
+
+  const view = options.window ?? pillElement.ownerDocument?.defaultView ?? window;
+  const root = options.root ?? pillElement.ownerDocument?.querySelector(".mask-stage");
+  const label = pillElement.querySelector(".pill-label");
+  const defaultLabel = label?.textContent ?? "Hold to reveal";
+  const activeLabel = options.activeLabel ?? "Revealing...";
+  const revealScale = options.revealScale ?? 1.5;
+
+  const startReveal = () => {
+    const mask = computeCenteredRevealMask(
+      maskSurface.getBoundingClientRect(),
+      revealScale,
+    );
+
+    pillElement.dataset.active = "true";
+    if (label) label.textContent = activeLabel;
+    maskSurface.style.setProperty("--mask-x", mask.xCss);
+    maskSurface.style.setProperty("--mask-y", mask.yCss);
+    maskSurface.style.setProperty("--mask-size", mask.sizeCss);
+    view.navigator?.vibrate?.(15);
+  };
+
+  const endReveal = () => {
+    pillElement.dataset.active = "false";
+    if (label) label.textContent = defaultLabel;
+    maskSurface.style.setProperty("--mask-size", "0px");
+  };
+
+  const updateVisibility = () => {
+    const visibility = computePillVisibility(
+      root?.getBoundingClientRect?.().bottom ?? 0,
+      options.hideThreshold ?? 100,
+    );
+    pillElement.style.opacity = visibility.opacity;
+    pillElement.style.pointerEvents = visibility.pointerEvents;
+  };
+
+  pillElement.addEventListener("pointerdown", startReveal);
+  view.addEventListener("pointerup", endReveal);
+  view.addEventListener("pointercancel", endReveal);
+  view.addEventListener("scroll", updateVisibility, { passive: true });
+  endReveal();
+  updateVisibility();
+
+  return {
+    destroy() {
+      pillElement.removeEventListener("pointerdown", startReveal);
+      view.removeEventListener("pointerup", endReveal);
+      view.removeEventListener("pointercancel", endReveal);
+      view.removeEventListener("scroll", updateVisibility);
     },
   };
 }
