@@ -133,6 +133,10 @@ test("page exposes a persistent theme toggle", () => {
   assert.match(html, /initThemeToggle\(document\);/);
   assert.match(css, /\[data-theme="light"\]\s*\{/);
   assert.match(cssBlock(".theme-toggle"), /border-radius:\s*999px/);
+  assert.match(html, /<svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" aria-hidden="true">/);
+  assert.match(html, /<svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" aria-hidden="true">/);
+  assert.match(cssBlock(".theme-icon"), /stroke:\s*currentColor/);
+  assert.doesNotMatch(cssBlock(".theme-toggle__sun"), /linear-gradient/);
 });
 
 test("mobile uses touch reveal instead of forcing the alternate hero layer open", () => {
