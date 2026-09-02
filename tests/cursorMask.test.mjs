@@ -18,6 +18,7 @@ import {
   getMaskSizeForInteraction,
   getMaskSizeForTarget,
   getPreviewMotionConfig,
+  shouldTriggerHoldReveal,
   interpolatePosition,
   isMaskExpansionTarget,
 } from "../src/cursorMask.mjs";
@@ -250,6 +251,12 @@ test("computeRadialFloodOrigin uses the pill center relative to the flood layer"
       yCss: "768px",
     },
   );
+});
+
+test("shouldTriggerHoldReveal requires the configured press duration", () => {
+  assert.equal(shouldTriggerHoldReveal(180, 260), false);
+  assert.equal(shouldTriggerHoldReveal(260, 260), true);
+  assert.equal(shouldTriggerHoldReveal(320, 260), true);
 });
 
 test("computeMobileParallax creates a subtle hero drift and fade", () => {

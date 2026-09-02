@@ -73,6 +73,10 @@ export function computeRadialFloodOrigin(pillRect, floodRect) {
   };
 }
 
+export function shouldTriggerHoldReveal(elapsedMs, holdDelay = 260) {
+  return elapsedMs >= holdDelay;
+}
+
 export function computeMobileParallax(scrollY, viewportHeight) {
   const clampedScroll = clamp(scrollY, 0, viewportHeight);
   const y = clampedScroll * 0.18;
@@ -545,9 +549,11 @@ export function initMobileRadialFlood(pillElement, floodLayer, options = {}) {
 
   const view = options.window ?? pillElement.ownerDocument?.defaultView ?? window;
   const root = options.root ?? pillElement.ownerDocument?.querySelector(".mask-stage");
+  const holdDelay = options.holdDelay ?? 260;
+  let holdTimer = 0;
+  let pressStartedAt = 0;
 
-  const expandWave = (event) => {
-    event?.preventDefault?.();
+  const expandWave = () => {
     const origin = computeRadialFloodOrigin(
       pillElement.getBoundingClientRect(),
       floodLayer.getBoundingClientRect(),
@@ -560,7 +566,22 @@ export function initMobileRadialFlood(pillElement, floodLayer, options = {}) {
     view.navigator?.vibrate?.([15, 30, 20]);
   };
 
+  const queueWave = (event) => {
+    event?.preventDefault?.();
+    view.clearTimeout?.(holdTimer);
+    pressStartedAt = view.performance?.now?.() ?? Date.now();
+    pillElement.dataset.pending = "true";
+    holdTimer = view.setTimeout(() => {
+      const elapsed = (view.performance?.now?.() ?? Date.now()) - pressStartedAt;
+      if (shouldTriggerHoldReveal(elapsed, holdDelay)) {
+        expandWave();
+      }
+    }, holdDelay);
+  };
+
   const collapseWave = () => {
+    view.clearTimeout?.(holdTimer);
+    pillElement.dataset.pending = "false";
     floodLayer.style.setProperty("--flood-radius", "0px");
     pillElement.dataset.active = "false";
   };
@@ -574,7 +595,7 @@ export function initMobileRadialFlood(pillElement, floodLayer, options = {}) {
     pillElement.style.pointerEvents = visibility.pointerEvents;
   };
 
-  pillElement.addEventListener("pointerdown", expandWave);
+  pillElement.addEventListener("pointerdown", queueWave);
   view.addEventListener("pointerup", collapseWave);
   view.addEventListener("pointercancel", collapseWave);
   view.addEventListener("scroll", updateVisibility, { passive: true });
@@ -583,7 +604,7 @@ export function initMobileRadialFlood(pillElement, floodLayer, options = {}) {
 
   return {
     destroy() {
-      pillElement.removeEventListener("pointerdown", expandWave);
+      pillElement.removeEventListener("pointerdown", queueWave);
       view.removeEventListener("pointerup", collapseWave);
       view.removeEventListener("pointercancel", collapseWave);
       view.removeEventListener("scroll", updateVisibility);

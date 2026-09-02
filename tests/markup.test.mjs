@@ -173,8 +173,10 @@ test("mobile reveal pill floats at the bottom thumb zone on touch viewports", ()
   assert.ok(pillStart > bodyStart && pillStart < mainStart, "Expected reveal pill directly under body before content");
   assert.match(html, /aria-label="Hold to flood reveal"/);
   assert.match(html, /<svg class="pill-orbit" viewBox="0 0 120 120" aria-hidden="true">/);
-  assert.match(html, />Press Here \/ Press Here \/</);
+  assert.match(html, />Press and hold here \/ Press and hold here \/</);
   assert.match(html, /<span class="pill-indicator" aria-hidden="true">/);
+  assert.match(html, /<svg class="pill-hand-icon" viewBox="0 0 24 24" aria-hidden="true">/);
+  assert.match(html, /holdDelay:\s*260/);
   assert.match(css, /@media\s*\(max-width:\s*760px\),\s*\(pointer:\s*coarse\)\s*\{[\s\S]*?\.mobile-reveal-pill\s*\{/);
   assert.match(css, /bottom:\s*28px/);
   assert.match(css, /width:\s*92px/);

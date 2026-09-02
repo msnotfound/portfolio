@@ -748,6 +748,7 @@ h2 em {
   }
 
   .mobile-reveal-pill:active,
+  .mobile-reveal-pill[data-pending="true"],
   .mobile-reveal-pill[data-active="true"] {
     border-color: var(--black);
     background: var(--black);
@@ -756,22 +757,24 @@ h2 em {
     transform: translateX(-50%) scale(0.92);
   }
 
+  .mobile-reveal-pill[data-pending="true"] .pill-indicator {
+    transform: scale(0.96);
+  }
+
   .mobile-reveal-pill[data-active="true"] .pill-indicator {
     background: color-mix(in srgb, var(--acid) 18%, transparent);
     box-shadow: none;
     transform: scale(0.92);
   }
 
-  .pill-core {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: currentColor;
-    box-shadow:
-      0 -10px 0 -4px currentColor,
-      0 10px 0 -4px currentColor,
-      -10px 0 0 -4px currentColor,
-      10px 0 0 -4px currentColor;
+  .pill-hand-icon {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 }
 
