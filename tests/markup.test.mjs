@@ -143,7 +143,7 @@ test("mobile uses touch reveal instead of forcing the alternate hero layer open"
 
   assert.ok(topVignette > bodyStart && topVignette < mainStart, "Expected top vignette at body level");
   assert.ok(bottomVignette > bodyStart && bottomVignette < mainStart, "Expected bottom vignette at body level");
-  assert.match(
+  assert.doesNotMatch(
     html,
     /enableMobileTouchReveal\(root\.querySelector\("\[data-mask-target\]"\), root\.querySelector\("\[data-mask-surface\]"\),/,
   );
@@ -198,4 +198,17 @@ test("mobile touch viewports hide the custom cursor follower", () => {
   const mobileMedia = css.slice(mobileMediaStart, reducedMotionStart);
 
   assert.match(mobileMedia, /\.cursor-orbit\s*\{[\s\S]*?display:\s*none/);
+});
+
+test("mobile touch viewports lock the headline hover reveal closed", () => {
+  const mobileMediaStart = css.indexOf("@media (max-width: 760px), (pointer: coarse)");
+  const reducedMotionStart = css.indexOf("@media (prefers-reduced-motion: reduce)");
+  assert.notEqual(mobileMediaStart, -1, "Expected mobile/coarse media block");
+  assert.notEqual(reducedMotionStart, -1, "Expected reduced motion media block");
+  const mobileMedia = css.slice(mobileMediaStart, reducedMotionStart);
+
+  assert.match(
+    mobileMedia,
+    /\.hero-reveal\s*\{[\s\S]*?clip-path:\s*circle\(0px at 50% 50%\) !important;[\s\S]*?pointer-events:\s*none/,
+  );
 });

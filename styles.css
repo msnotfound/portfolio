@@ -680,6 +680,11 @@ h2 em {
     display: none;
   }
 
+  .hero-reveal {
+    clip-path: circle(0px at 50% 50%) !important;
+    pointer-events: none;
+  }
+
   .mobile-reveal-pill {
     position: fixed;
     bottom: 28px;

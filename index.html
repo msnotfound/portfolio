@@ -235,7 +235,6 @@
         createMagneticButtonController,
         createMobileParallaxController,
         createWorkPreviewController,
-        enableMobileTouchReveal,
         initMobileRadialFlood,
       } from "./src/cursorMask.mjs";
       import { initThemeToggle } from "./src/themeToggle.mjs";
@@ -256,9 +255,6 @@
       }
 
       if (root && !prefersReducedMotion && isCoarsePointer) {
-        enableMobileTouchReveal(root.querySelector("[data-mask-target]"), root.querySelector("[data-mask-surface]"), {
-          revealSize: 220,
-        });
         initMobileRadialFlood(document.querySelector("[data-mobile-trigger]"), root.querySelector("[data-reveal-flood]"), {
           root,
           holdDelay: 260,
