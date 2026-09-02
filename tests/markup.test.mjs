@@ -118,3 +118,7 @@ test("cursor follower is global and fixed above all page sections", () => {
     "Expected native cursor hidden globally over document and interactive elements",
   );
 });
+
+test("magnetic buttons use a subtle polished radius", () => {
+  assert.match(cssBlock(".magnetic-link"), /border-radius:\s*6px/);
+});
