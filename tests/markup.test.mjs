@@ -122,3 +122,15 @@ test("cursor follower is global and fixed above all page sections", () => {
 test("magnetic buttons use a subtle polished radius", () => {
   assert.match(cssBlock(".magnetic-link"), /border-radius:\s*6px/);
 });
+
+test("page exposes a persistent theme toggle", () => {
+  assert.match(html, /<html lang="en" data-theme="dark">/);
+  assert.match(
+    html,
+    /<button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to light theme" aria-pressed="true">/,
+  );
+  assert.match(html, /import \{ initThemeToggle \} from "\.\/src\/themeToggle\.mjs";/);
+  assert.match(html, /initThemeToggle\(document\);/);
+  assert.match(css, /\[data-theme="light"\]\s*\{/);
+  assert.match(cssBlock(".theme-toggle"), /border-radius:\s*999px/);
+});
