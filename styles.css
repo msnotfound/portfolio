@@ -569,6 +569,7 @@ h2 em {
   width: 360px;
   height: 342px;
   border: 1px solid var(--acid);
+  border-radius: 8px;
   background: var(--acid);
   color: var(--black);
   overflow: hidden;

@@ -134,6 +134,10 @@ test("magnetic buttons use a subtle polished radius", () => {
   assert.match(cssBlock(".magnetic-link"), /border-radius:\s*6px/);
 });
 
+test("work preview window has a restrained rounded corner treatment", () => {
+  assert.match(cssBlock(".work-preview"), /border-radius:\s*8px/);
+});
+
 test("page exposes a persistent theme toggle", () => {
   assert.match(html, /<html lang="en" data-theme="dark">/);
   assert.match(
