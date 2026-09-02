@@ -253,10 +253,10 @@ test("computeRadialFloodOrigin uses the pill center relative to the flood layer"
   );
 });
 
-test("shouldTriggerHoldReveal requires the configured press duration", () => {
-  assert.equal(shouldTriggerHoldReveal(180, 260), false);
-  assert.equal(shouldTriggerHoldReveal(260, 260), true);
-  assert.equal(shouldTriggerHoldReveal(320, 260), true);
+test("shouldTriggerHoldReveal requires the configured premium press duration", () => {
+  assert.equal(shouldTriggerHoldReveal(260, 380), false);
+  assert.equal(shouldTriggerHoldReveal(380, 380), true);
+  assert.equal(shouldTriggerHoldReveal(460, 380), true);
 });
 
 test("computeMobileParallax creates a subtle hero drift and fade", () => {

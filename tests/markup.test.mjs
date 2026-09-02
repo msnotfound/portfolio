@@ -176,7 +176,8 @@ test("mobile reveal pill floats at the bottom thumb zone on touch viewports", ()
   assert.match(html, />Press and hold here \/ Press and hold here \/</);
   assert.match(html, /<span class="pill-indicator" aria-hidden="true">/);
   assert.match(html, /<svg class="pill-hand-icon" viewBox="0 0 24 24" aria-hidden="true">/);
-  assert.match(html, /holdDelay:\s*260/);
+  assert.match(html, /holdDelay:\s*380/);
+  assert.match(html, /collapseDelay:\s*140/);
   assert.match(css, /@media\s*\(max-width:\s*760px\),\s*\(pointer:\s*coarse\)\s*\{[\s\S]*?\.mobile-reveal-pill\s*\{/);
   assert.match(css, /bottom:\s*28px/);
   assert.match(css, /width:\s*92px/);
@@ -186,7 +187,7 @@ test("mobile reveal pill floats at the bottom thumb zone on touch viewports", ()
 
 test("radial flood layer expands from the mobile pill origin", () => {
   assert.match(cssBlock(".stage-reveal-flood"), /clip-path:\s*circle\(var\(--flood-radius,\s*0px\) at var\(--pill-x,\s*50vw\) var\(--pill-y,\s*90vh\)\)/);
-  assert.match(cssBlock(".stage-reveal-flood"), /transition:\s*clip-path 560ms cubic-bezier\(0\.19,\s*1,\s*0\.22,\s*1\)/);
+  assert.match(cssBlock(".stage-reveal-flood"), /transition:\s*clip-path 820ms cubic-bezier\(0\.19,\s*1,\s*0\.22,\s*1\)/);
   assert.match(css, /\.mobile-reveal-pill\[data-active="true"\]\s*\{[\s\S]*?box-shadow:\s*0 0 40px/);
 });
 

@@ -257,7 +257,8 @@
       if (root && !prefersReducedMotion && isCoarsePointer) {
         initMobileRadialFlood(document.querySelector("[data-mobile-trigger]"), root.querySelector("[data-reveal-flood]"), {
           root,
-          holdDelay: 260,
+          holdDelay: 380,
+          collapseDelay: 140,
         });
         createMobileParallaxController(document);
       }
