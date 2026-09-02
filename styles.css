@@ -189,7 +189,7 @@ body {
 
 .perimeter-top {
   top: 24px;
-  padding-bottom: 16px;
+  padding: 10px 12px 14px;
   border-bottom: 1px solid var(--line);
   background: color-mix(in srgb, var(--background) 78%, transparent);
   backdrop-filter: blur(14px);

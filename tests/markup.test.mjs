@@ -259,11 +259,17 @@ test("radial reveal trigger does not auto-hide on scroll", () => {
 });
 
 test("top perimeter name stays pinned above viewport overlays", () => {
+  const bodyStart = indexOfSnippet("<body>");
+  const mainStart = indexOfSnippet('<main class="mask-stage" data-mask-root>');
+  const topPerimeterStart = indexOfSnippet('<div class="perimeter perimeter-top" aria-hidden="true">');
+
+  assert.ok(topPerimeterStart > bodyStart && topPerimeterStart < mainStart, "Expected top perimeter outside isolated hero stage");
   assert.match(cssBlock(".perimeter"), /position:\s*fixed/);
   assert.match(cssBlock(".perimeter"), /z-index:\s*120/);
   assert.match(cssBlock(".perimeter"), /color:\s*var\(--text\)/);
   assert.match(cssBlock(".perimeter"), /text-shadow:\s*0 0 18px var\(--background\)/);
   assert.match(cssBlock(".perimeter-top"), /top:\s*24px/);
+  assert.match(cssBlock(".perimeter-top"), /padding:\s*10px 12px 14px/);
   assert.match(cssBlock(".perimeter-top"), /background:\s*color-mix\(in srgb,\s*var\(--background\) 78%, transparent\)/);
   assert.match(cssBlock(".perimeter-top"), /backdrop-filter:\s*blur\(14px\)/);
 });
