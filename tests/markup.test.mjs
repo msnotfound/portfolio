@@ -250,6 +250,9 @@ test("mobile touch viewports lock the headline hover reveal closed", () => {
     mobileMedia,
     /\.hero-reveal\s*\{[\s\S]*?clip-path:\s*circle\(0px at 50% 50%\) !important;[\s\S]*?pointer-events:\s*none/,
   );
+  assert.match(mobileMedia, /\.hero-reveal\s*\{[\s\S]*?inset:\s*0/);
+  assert.match(mobileMedia, /\.hero-reveal\s*\{[\s\S]*?padding:\s*0/);
+  assert.match(mobileMedia, /\.hero-reveal\s*\{[\s\S]*?overflow:\s*hidden/);
 });
 
 test("radial reveal trigger does not auto-hide on scroll", () => {

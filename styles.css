@@ -729,6 +729,9 @@ h2 em {
   }
 
   .hero-reveal {
+    inset: 0;
+    padding: 0;
+    overflow: hidden;
     clip-path: circle(0px at 50% 50%) !important;
     pointer-events: none;
   }
