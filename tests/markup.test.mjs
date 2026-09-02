@@ -176,3 +176,13 @@ test("mobile reveal pill floats at the bottom thumb zone on touch viewports", ()
   assert.match(css, /bottom:\s*28px/);
   assert.match(css, /backdrop-filter:\s*blur\(16px\)/);
 });
+
+test("mobile touch viewports hide the custom cursor follower", () => {
+  const mobileMediaStart = css.indexOf("@media (max-width: 760px), (pointer: coarse)");
+  const reducedMotionStart = css.indexOf("@media (prefers-reduced-motion: reduce)");
+  assert.notEqual(mobileMediaStart, -1, "Expected mobile/coarse media block");
+  assert.notEqual(reducedMotionStart, -1, "Expected reduced motion media block");
+  const mobileMedia = css.slice(mobileMediaStart, reducedMotionStart);
+
+  assert.match(mobileMedia, /\.cursor-orbit\s*\{[\s\S]*?display:\s*none/);
+});

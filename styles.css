@@ -642,6 +642,10 @@ h2 em {
 }
 
 @media (max-width: 760px), (pointer: coarse) {
+  .cursor-orbit {
+    display: none;
+  }
+
   .mobile-reveal-pill {
     position: fixed;
     bottom: 28px;
