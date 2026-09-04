@@ -731,14 +731,28 @@ h2 em {
   }
 
   .work-list a {
-    grid-template-columns: 44px 1fr;
-    gap: 12px;
-    min-height: 104px;
-    will-change: transform;
+    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    gap: 10px 14px;
+    align-items: center;
+    min-height: 148px;
+    padding-block: 24px;
+  }
+
+  .work-list a > span {
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+
+  .work-list strong {
+    display: block;
+    line-height: 0.92;
   }
 
   .work-list small {
     grid-column: 2;
+    margin-top: 10px;
+    line-height: 1.35;
   }
 
   .work-preview {

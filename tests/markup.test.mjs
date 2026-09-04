@@ -282,6 +282,23 @@ test("mobile touch viewports lock the headline hover reveal closed", () => {
   assert.match(mobileMedia, /\.hero-reveal\s*\{[\s\S]*?overflow:\s*hidden/);
 });
 
+test("mobile work rows keep an even static rhythm", () => {
+  const mobileMediaStart = css.indexOf("@media (max-width: 760px)");
+  const coarseMediaStart = css.indexOf("@media (max-width: 760px), (pointer: coarse)");
+  assert.notEqual(mobileMediaStart, -1, "Expected mobile media block");
+  assert.notEqual(coarseMediaStart, -1, "Expected coarse pointer media block");
+  const mobileMedia = css.slice(mobileMediaStart, coarseMediaStart);
+
+  assert.match(mobileMedia, /\.work-list a\s*\{[\s\S]*?grid-template-columns:\s*44px minmax\(0,\s*1fr\)/);
+  assert.match(mobileMedia, /\.work-list a\s*\{[\s\S]*?grid-template-rows:\s*auto auto/);
+  assert.match(mobileMedia, /\.work-list a\s*\{[\s\S]*?align-items:\s*center/);
+  assert.match(mobileMedia, /\.work-list a\s*\{[\s\S]*?min-height:\s*148px/);
+  assert.match(mobileMedia, /\.work-list a\s*\{[\s\S]*?padding-block:\s*24px/);
+  assert.doesNotMatch(mobileMedia, /\.work-list a\s*\{[\s\S]*?will-change:\s*transform/);
+  assert.match(mobileMedia, /\.work-list a > span\s*\{[\s\S]*?grid-row:\s*1 \/ span 2/);
+  assert.match(mobileMedia, /\.work-list small\s*\{[\s\S]*?margin-top:\s*10px/);
+});
+
 test("radial reveal trigger does not auto-hide on scroll", () => {
   const radialStart = cursorMaskSource.indexOf("export function initMobileRadialFlood");
   const teleprompterStart = cursorMaskSource.indexOf("export function createTeleprompterScrollController");
@@ -292,6 +309,18 @@ test("radial reveal trigger does not auto-hide on scroll", () => {
   assert.doesNotMatch(radialController, /scroll/);
   assert.doesNotMatch(radialController, /computePillVisibility/);
   assert.doesNotMatch(radialController, /pointerEvents\s*=\s*visibility\.pointerEvents/);
+});
+
+test("mobile parallax does not transform project list rows", () => {
+  const parallaxStart = cursorMaskSource.indexOf("export function createMobileParallaxController");
+  const clampStart = cursorMaskSource.indexOf("function clamp");
+  assert.notEqual(parallaxStart, -1, "Expected mobile parallax controller");
+  assert.notEqual(clampStart, -1, "Expected clamp helper after mobile parallax controller");
+  const parallaxController = cursorMaskSource.slice(parallaxStart, clampStart);
+
+  assert.doesNotMatch(parallaxController, /querySelectorAll\("\.work-list a"\)/);
+  assert.doesNotMatch(parallaxController, /workItems/);
+  assert.doesNotMatch(parallaxController, /item\.style\.transform/);
 });
 
 test("top perimeter name stays pinned above viewport overlays", () => {

@@ -663,8 +663,7 @@ export function createMobileParallaxController(root = document, options = {}) {
   const heroStack = root.querySelector(".hero-stack");
   const maskStage = root.querySelector(".mask-stage");
   const maskFrame = root.querySelector(".hero-mask-frame");
-  const workItems = [...root.querySelectorAll(".work-list a")];
-  if (!heroStack && !maskStage && !maskFrame && workItems.length === 0) {
+  if (!heroStack && !maskStage && !maskFrame) {
     return { destroy() {} };
   }
 
@@ -682,11 +681,6 @@ export function createMobileParallaxController(root = document, options = {}) {
     if (maskStage) {
       maskStage.style.backgroundPosition = `0 ${Math.round(parallax.y * -0.35)}px`;
     }
-
-    workItems.forEach((item, index) => {
-      const drift = Math.round((parallax.y * 0.08) * ((index % 2 === 0) ? 1 : -1));
-      item.style.transform = `translate3d(0, ${drift}px, 0)`;
-    });
   };
 
   const handleScroll = () => {
