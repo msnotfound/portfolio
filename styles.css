@@ -577,6 +577,8 @@ h2 em {
 }
 
 .teleprompter-word {
+  display: inline;
+  white-space: pre-wrap;
   color: color-mix(in srgb, var(--text) 24%, transparent);
   transition:
     color 260ms cubic-bezier(0.16, 1, 0.3, 1),

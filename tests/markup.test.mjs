@@ -156,6 +156,8 @@ test("teleprompter CSS uses discrete word states with reduced-motion fallback", 
 
   assert.match(teleprompterBlock, /--teleprompter-progress:\s*0/);
   assert.match(teleprompterBlock, /color:\s*color-mix\(in srgb,\s*var\(--text\) 28%, transparent\)/);
+  assert.match(css, /\.teleprompter-word\s*\{[\s\S]*?display:\s*inline/);
+  assert.match(css, /\.teleprompter-word\s*\{[\s\S]*?white-space:\s*pre-wrap/);
   assert.match(css, /\.teleprompter-word\s*\{[\s\S]*?color:\s*color-mix\(in srgb,\s*var\(--text\) 24%, transparent\)/);
   assert.match(css, /\.teleprompter-word\.is-lit\s*\{[\s\S]*?color:\s*var\(--text\)/);
   assert.doesNotMatch(teleprompterBlock, /-webkit-text-fill-color:\s*transparent/);
