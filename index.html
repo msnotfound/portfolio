@@ -113,11 +113,11 @@
         </section>
 
         <div class="hero-grid">
-          <p>
+          <p data-teleprompter>
             Agentic automation, backend prototypes, developer tools, and research-backed
             systems engineering.
           </p>
-          <p>
+          <p data-teleprompter>
             Available for focused freelance builds, technical prototypes, and debugging
             work.
           </p>
@@ -166,8 +166,8 @@
     <div class="cursor-orbit" data-mask-cursor aria-hidden="true"></div>
 
     <section class="work-section" aria-labelledby="work-title">
-      <div class="section-label">Selected work</div>
-      <h2 id="work-title">Proof that can be opened, read, tested, or hired against.</h2>
+      <div class="section-label" data-teleprompter>Selected work</div>
+      <h2 id="work-title" data-teleprompter>Proof that can be opened, read, tested, or hired against.</h2>
       <div class="work-list" data-work-list>
         <a
           href="https://github.com/msnotfound/fleetorch"
@@ -175,6 +175,7 @@
           data-preview-meta="Go / CLI / agent orchestration"
           data-preview-copy="Routes AI coding work across local CLI agents with budgets, concurrency, and isolated execution."
           data-preview-variant="fleetorch"
+          data-teleprompter
         >
           <span>01</span>
           <strong>Fleetorch</strong>
@@ -186,6 +187,7 @@
           data-preview-meta="Research artifact / desktop automation"
           data-preview-copy="Linux desktop middleware that records workflows and compiles them into replayable execution graphs."
           data-preview-variant="phantom"
+          data-teleprompter
         >
           <span>02</span>
           <strong>Phantom</strong>
@@ -197,6 +199,7 @@
           data-preview-meta="Web3 / agents / ZK systems"
           data-preview-copy="A zero-knowledge signal marketplace concept with agentic workflows and cryptographic verification."
           data-preview-variant="ghostsignal"
+          data-teleprompter
         >
           <span>03</span>
           <strong>GhostSignal</strong>
@@ -208,6 +211,7 @@
           data-preview-meta="Offline-first AI / RAG / public service"
           data-preview-copy="Low-connectivity copilot architecture for field workflows, local retrieval, OCR, and batch sync."
           data-preview-variant="sahayak"
+          data-teleprompter
         >
           <span>04</span>
           <strong>Sahayak</strong>
@@ -250,6 +254,7 @@
         createCursorMaskController,
         createMagneticButtonController,
         createMobileParallaxController,
+        createTeleprompterScrollController,
         createWorkPreviewController,
         initMobileRadialFlood,
       } from "./src/cursorMask.mjs";
@@ -260,6 +265,10 @@
       const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
 
       initThemeToggle(document);
+
+      if (!prefersReducedMotion) {
+        createTeleprompterScrollController(document);
+      }
 
       if (root && !prefersReducedMotion && !isCoarsePointer && window.PointerEvent) {
         createCursorMaskController(root, {

@@ -89,6 +89,17 @@ export function computeMobileParallax(scrollY, viewportHeight) {
   };
 }
 
+export function computeTeleprompterProgress(rectTop, viewportHeight, options = {}) {
+  const triggerStart = options.triggerStart ?? 0.88;
+  const triggerEnd = options.triggerEnd ?? 0.38;
+  const startPx = viewportHeight * triggerStart;
+  const endPx = viewportHeight * triggerEnd;
+  const range = startPx - endPx || 1;
+  const rawProgress = (startPx - rectTop) / range;
+
+  return Number(clamp(rawProgress, 0, 1).toFixed(3));
+}
+
 export function computeTiltParallax(orientationEvent, maxOffset = 12) {
   const gamma = clamp(orientationEvent.gamma || 0, -30, 30);
   const beta = clamp((orientationEvent.beta || 0) - 45, -30, 30);
@@ -603,6 +614,46 @@ export function initMobileRadialFlood(pillElement, floodLayer, options = {}) {
       view.removeEventListener("pointercancel", collapseWave);
       view.clearTimeout?.(holdTimer);
       view.clearTimeout?.(collapseTimer);
+    },
+  };
+}
+
+export function createTeleprompterScrollController(root = document, options = {}) {
+  const elements = [...root.querySelectorAll("[data-teleprompter]")];
+  if (elements.length === 0) return { destroy() {} };
+
+  const view = root.defaultView ?? root.ownerDocument?.defaultView ?? window;
+  let ticking = false;
+
+  const update = () => {
+    ticking = false;
+    const viewportHeight = view.innerHeight || 1;
+
+    elements.forEach((element) => {
+      const progress = computeTeleprompterProgress(
+        element.getBoundingClientRect().top,
+        viewportHeight,
+        options,
+      );
+      element.style.setProperty("--teleprompter-progress", progress.toFixed(3));
+    });
+  };
+
+  const scheduleUpdate = () => {
+    if (!ticking) {
+      ticking = true;
+      view.requestAnimationFrame(update);
+    }
+  };
+
+  view.addEventListener("scroll", scheduleUpdate, { passive: true });
+  view.addEventListener("resize", scheduleUpdate, { passive: true });
+  update();
+
+  return {
+    destroy() {
+      view.removeEventListener("scroll", scheduleUpdate);
+      view.removeEventListener("resize", scheduleUpdate);
     },
   };
 }

@@ -12,6 +12,7 @@ import {
   computePillVisibility,
   computeRadialFloodOrigin,
   computePreviewTrackOffset,
+  computeTeleprompterProgress,
   computeTiltParallax,
   computeTouchMaskUpdate,
   decidePreviewIndex,
@@ -189,6 +190,13 @@ test("computePreviewTrackOffset scrolls the preview track by item height plus ga
     y: -852,
     css: "translate3d(0, -852px, 0)",
   });
+});
+
+test("computeTeleprompterProgress maps element position through the viewport reveal band", () => {
+  assert.equal(computeTeleprompterProgress(704, 800), 0);
+  assert.equal(computeTeleprompterProgress(304, 800), 1);
+  assert.equal(computeTeleprompterProgress(504, 800), 0.5);
+  assert.equal(computeTeleprompterProgress(504, 800, { triggerStart: 0.9, triggerEnd: 0.4 }), 0.54);
 });
 
 test("computeTouchMaskUpdate positions a mobile reveal under the active touch", () => {

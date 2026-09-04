@@ -138,6 +138,36 @@ test("work preview window has a restrained rounded corner treatment", () => {
   assert.match(cssBlock(".work-preview"), /border-radius:\s*8px/);
 });
 
+test("teleprompter text scrubbing is wired to all below-hero text targets", () => {
+  assert.match(html, /createTeleprompterScrollController/);
+  assert.match(html, /createTeleprompterScrollController\(document\);/);
+  assert.match(html, /<p data-teleprompter>\s*Agentic automation/);
+  assert.match(html, /<p data-teleprompter>\s*Available for focused freelance/);
+  assert.match(html, /<div class="section-label" data-teleprompter>Selected work<\/div>/);
+  assert.match(html, /<h2 id="work-title" data-teleprompter>/);
+  assert.equal([...html.matchAll(/data-preview-title="[^"]+"[\s\S]*?data-teleprompter/g)].length, 4);
+});
+
+test("teleprompter CSS uses clipped gradient text with reduced-motion fallback", () => {
+  const teleprompterMatch = css.match(/\[data-teleprompter\]\s*\{([^}]*)\}/);
+  assert.ok(teleprompterMatch, "Expected CSS block for [data-teleprompter]");
+  const teleprompterBlock = teleprompterMatch[1];
+
+  assert.match(teleprompterBlock, /--teleprompter-progress:\s*0/);
+  assert.match(teleprompterBlock, /background:\s*linear-gradient\(/);
+  assert.match(teleprompterBlock, /-webkit-background-clip:\s*text/);
+  assert.match(teleprompterBlock, /-webkit-text-fill-color:\s*transparent/);
+  assert.match(teleprompterBlock, /will-change:\s*background/);
+  assert.match(
+    css,
+    /\.work-list a\[data-teleprompter\] strong,[\s\S]*?\.work-list a\[data-teleprompter\] span,[\s\S]*?\.work-list a\[data-teleprompter\] small\s*\{[\s\S]*?-webkit-text-fill-color:\s*inherit/,
+  );
+  assert.match(
+    css,
+    /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*?\[data-teleprompter\]\s*\{[\s\S]*?-webkit-text-fill-color:\s*var\(--text\) !important;[\s\S]*?color:\s*var\(--text\) !important;/,
+  );
+});
+
 test("page exposes a persistent theme toggle", () => {
   assert.match(html, /<html lang="en" data-theme="dark">/);
   assert.match(
@@ -257,10 +287,10 @@ test("mobile touch viewports lock the headline hover reveal closed", () => {
 
 test("radial reveal trigger does not auto-hide on scroll", () => {
   const radialStart = cursorMaskSource.indexOf("export function initMobileRadialFlood");
-  const parallaxStart = cursorMaskSource.indexOf("export function createMobileParallaxController");
+  const teleprompterStart = cursorMaskSource.indexOf("export function createTeleprompterScrollController");
   assert.notEqual(radialStart, -1, "Expected radial flood controller");
-  assert.notEqual(parallaxStart, -1, "Expected mobile parallax controller");
-  const radialController = cursorMaskSource.slice(radialStart, parallaxStart);
+  assert.notEqual(teleprompterStart, -1, "Expected teleprompter controller after radial flood controller");
+  const radialController = cursorMaskSource.slice(radialStart, teleprompterStart);
 
   assert.doesNotMatch(radialController, /scroll/);
   assert.doesNotMatch(radialController, /computePillVisibility/);
