@@ -588,13 +588,6 @@ h2 em {
   transition: opacity 200ms ease;
 }
 
-.work-list a[data-teleprompter] strong,
-.work-list a[data-teleprompter] span,
-.work-list a[data-teleprompter] small {
-  color: inherit;
-  -webkit-text-fill-color: inherit;
-}
-
 .work-preview {
   position: fixed;
   top: 0;

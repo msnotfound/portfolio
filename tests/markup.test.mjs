@@ -145,7 +145,8 @@ test("teleprompter text scrubbing is wired to all below-hero text targets", () =
   assert.doesNotMatch(html, /<p data-teleprompter>\s*Available for focused freelance/);
   assert.match(html, /<div class="section-label" data-teleprompter>Selected work<\/div>/);
   assert.match(html, /<h2 id="work-title" data-teleprompter>/);
-  assert.equal([...html.matchAll(/data-preview-title="[^"]+"[\s\S]*?data-teleprompter/g)].length, 4);
+  assert.equal([...html.matchAll(/data-preview-title="[^"]+"[\s\S]*?data-teleprompter/g)].length, 0);
+  assert.doesNotMatch(css, /\.work-list a\[data-teleprompter\]/);
 });
 
 test("teleprompter CSS uses clipped gradient text with reduced-motion fallback", () => {
@@ -158,10 +159,6 @@ test("teleprompter CSS uses clipped gradient text with reduced-motion fallback",
   assert.match(teleprompterBlock, /-webkit-background-clip:\s*text/);
   assert.match(teleprompterBlock, /-webkit-text-fill-color:\s*transparent/);
   assert.match(teleprompterBlock, /will-change:\s*background/);
-  assert.match(
-    css,
-    /\.work-list a\[data-teleprompter\] strong,[\s\S]*?\.work-list a\[data-teleprompter\] span,[\s\S]*?\.work-list a\[data-teleprompter\] small\s*\{[\s\S]*?-webkit-text-fill-color:\s*inherit/,
-  );
   assert.match(
     css,
     /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*?\[data-teleprompter\]\s*\{[\s\S]*?-webkit-text-fill-color:\s*var\(--text\) !important;[\s\S]*?color:\s*var\(--text\) !important;/,
