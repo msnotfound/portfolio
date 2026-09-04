@@ -13,6 +13,7 @@ import {
   computeRadialFloodOrigin,
   computePreviewTrackOffset,
   computeTeleprompterProgress,
+  computeTeleprompterWordStates,
   computeTiltParallax,
   computeTouchMaskUpdate,
   decidePreviewIndex,
@@ -197,6 +198,15 @@ test("computeTeleprompterProgress maps element position through the viewport rev
   assert.equal(computeTeleprompterProgress(304, 800), 1);
   assert.equal(computeTeleprompterProgress(504, 800), 0.5);
   assert.equal(computeTeleprompterProgress(504, 800, { triggerStart: 0.9, triggerEnd: 0.4 }), 0.54);
+});
+
+test("computeTeleprompterWordStates lights words by progress thresholds", () => {
+  assert.deepEqual(computeTeleprompterWordStates(0, 5), [false, false, false, false, false]);
+  assert.deepEqual(computeTeleprompterWordStates(0.01, 5), [true, false, false, false, false]);
+  assert.deepEqual(computeTeleprompterWordStates(0.4, 5), [true, true, false, false, false]);
+  assert.deepEqual(computeTeleprompterWordStates(0.99, 5), [true, true, true, true, true]);
+  assert.deepEqual(computeTeleprompterWordStates(1, 5), [true, true, true, true, true]);
+  assert.deepEqual(computeTeleprompterWordStates(0.5, 0), []);
 });
 
 test("computeTouchMaskUpdate positions a mobile reveal under the active touch", () => {

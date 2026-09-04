@@ -149,19 +149,19 @@ test("teleprompter text scrubbing is wired to all below-hero text targets", () =
   assert.doesNotMatch(css, /\.work-list a\[data-teleprompter\]/);
 });
 
-test("teleprompter CSS uses clipped gradient text with reduced-motion fallback", () => {
+test("teleprompter CSS uses discrete word states with reduced-motion fallback", () => {
   const teleprompterMatch = css.match(/\[data-teleprompter\]\s*\{([^}]*)\}/);
   assert.ok(teleprompterMatch, "Expected CSS block for [data-teleprompter]");
   const teleprompterBlock = teleprompterMatch[1];
 
   assert.match(teleprompterBlock, /--teleprompter-progress:\s*0/);
-  assert.match(teleprompterBlock, /background:\s*linear-gradient\(/);
-  assert.match(teleprompterBlock, /-webkit-background-clip:\s*text/);
-  assert.match(teleprompterBlock, /-webkit-text-fill-color:\s*transparent/);
-  assert.match(teleprompterBlock, /will-change:\s*background/);
+  assert.match(teleprompterBlock, /color:\s*color-mix\(in srgb,\s*var\(--text\) 28%, transparent\)/);
+  assert.match(css, /\.teleprompter-word\s*\{[\s\S]*?color:\s*color-mix\(in srgb,\s*var\(--text\) 24%, transparent\)/);
+  assert.match(css, /\.teleprompter-word\.is-lit\s*\{[\s\S]*?color:\s*var\(--text\)/);
+  assert.doesNotMatch(teleprompterBlock, /-webkit-text-fill-color:\s*transparent/);
   assert.match(
     css,
-    /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*?\[data-teleprompter\]\s*\{[\s\S]*?-webkit-text-fill-color:\s*var\(--text\) !important;[\s\S]*?color:\s*var\(--text\) !important;/,
+    /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*?\[data-teleprompter\],[\s\S]*?\.teleprompter-word\s*\{[\s\S]*?color:\s*var\(--text\) !important;/,
   );
 });
 

@@ -100,6 +100,16 @@ export function computeTeleprompterProgress(rectTop, viewportHeight, options = {
   return Number(clamp(rawProgress, 0, 1).toFixed(3));
 }
 
+export function computeTeleprompterWordStates(progress, wordCount) {
+  if (wordCount <= 0) return [];
+
+  const litCount = progress <= 0
+    ? 0
+    : Math.ceil(clamp(progress, 0, 1) * wordCount);
+
+  return Array.from({ length: wordCount }, (_, index) => index < litCount);
+}
+
 export function computeTiltParallax(orientationEvent, maxOffset = 12) {
   const gamma = clamp(orientationEvent.gamma || 0, -30, 30);
   const beta = clamp((orientationEvent.beta || 0) - 45, -30, 30);
@@ -619,7 +629,12 @@ export function initMobileRadialFlood(pillElement, floodLayer, options = {}) {
 }
 
 export function createTeleprompterScrollController(root = document, options = {}) {
-  const elements = [...root.querySelectorAll("[data-teleprompter]")];
+  const elements = [...root.querySelectorAll("[data-teleprompter]")]
+    .map((element) => ({
+      element,
+      words: prepareTeleprompterWords(element),
+    }))
+    .filter((entry) => entry.words.length > 0);
   if (elements.length === 0) return { destroy() {} };
 
   const view = root.defaultView ?? root.ownerDocument?.defaultView ?? window;
@@ -629,13 +644,17 @@ export function createTeleprompterScrollController(root = document, options = {}
     ticking = false;
     const viewportHeight = view.innerHeight || 1;
 
-    elements.forEach((element) => {
+    elements.forEach(({ element, words }) => {
       const progress = computeTeleprompterProgress(
         element.getBoundingClientRect().top,
         viewportHeight,
         options,
       );
       element.style.setProperty("--teleprompter-progress", progress.toFixed(3));
+      const states = computeTeleprompterWordStates(progress, words.length);
+      words.forEach((word, index) => {
+        word.classList.toggle("is-lit", states[index]);
+      });
     });
   };
 
@@ -712,6 +731,23 @@ export function createMobileParallaxController(root = document, options = {}) {
       view.removeEventListener("deviceorientation", handleTilt);
     },
   };
+}
+
+function prepareTeleprompterWords(element) {
+  const existingWords = [...element.querySelectorAll(".teleprompter-word")];
+  if (existingWords.length > 0) return existingWords;
+
+  const text = element.textContent?.trim().replace(/\s+/g, " ");
+  if (!text) return [];
+
+  element.textContent = "";
+  return text.split(" ").map((word, index) => {
+    const span = element.ownerDocument.createElement("span");
+    span.className = "teleprompter-word";
+    span.textContent = index === 0 ? word : ` ${word}`;
+    element.append(span);
+    return span;
+  });
 }
 
 function clamp(value, min, max) {
