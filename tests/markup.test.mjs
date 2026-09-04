@@ -141,8 +141,8 @@ test("work preview window has a restrained rounded corner treatment", () => {
 test("teleprompter text scrubbing is wired to all below-hero text targets", () => {
   assert.match(html, /createTeleprompterScrollController/);
   assert.match(html, /createTeleprompterScrollController\(document\);/);
-  assert.match(html, /<p data-teleprompter>\s*Agentic automation/);
-  assert.match(html, /<p data-teleprompter>\s*Available for focused freelance/);
+  assert.doesNotMatch(html, /<p data-teleprompter>\s*Agentic automation/);
+  assert.doesNotMatch(html, /<p data-teleprompter>\s*Available for focused freelance/);
   assert.match(html, /<div class="section-label" data-teleprompter>Selected work<\/div>/);
   assert.match(html, /<h2 id="work-title" data-teleprompter>/);
   assert.equal([...html.matchAll(/data-preview-title="[^"]+"[\s\S]*?data-teleprompter/g)].length, 4);
