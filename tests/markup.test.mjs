@@ -58,7 +58,6 @@ test("shared hero content sits outside the base and reveal sections", () => {
 
   for (const snippet of [
     '<div class="hero-grid">',
-    '<div class="perimeter perimeter-top" aria-hidden="true">',
     '<nav class="hero-actions" aria-label="Primary links">',
   ]) {
     const index = indexOfSnippet(snippet);
@@ -178,7 +177,8 @@ test("page exposes a persistent theme toggle", () => {
   assert.match(html, /import \{ initThemeToggle \} from "\.\/src\/themeToggle\.mjs";/);
   assert.match(html, /initThemeToggle\(document\);/);
   assert.match(css, /\[data-theme="light"\]\s*\{/);
-  assert.match(cssBlock(".theme-toggle"), /top:\s*76px/);
+  assert.match(cssBlock(".theme-toggle"), /bottom:\s*30px/);
+  assert.match(cssBlock(".theme-toggle"), /left:\s*24px/);
   assert.match(cssBlock(".theme-toggle"), /border-radius:\s*999px/);
   assert.match(html, /<svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" aria-hidden="true">/);
   assert.match(html, /<svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" aria-hidden="true">/);
@@ -197,8 +197,8 @@ test("page exposes a persistent theme toggle", () => {
   );
   assert.match(
     css,
-    /@media\s*\(max-width:\s*760px\)[\s\S]*?\.theme-toggle\s*\{[\s\S]*?top:\s*76px/,
-    "Expected mobile theme toggle to keep the same gap below the top perimeter",
+    /@media\s*\(max-width:\s*760px\)[\s\S]*?\.theme-toggle\s*\{[\s\S]*?bottom:\s*28px/,
+    "Expected mobile theme toggle in the mirrored lower-left control position",
   );
 });
 
@@ -210,7 +210,8 @@ test("page exposes an on-by-default ambient audio toggle", () => {
   assert.match(html, /import \{ createAmbientAudioController \} from "\.\/src\/ambientAudio\.mjs";/);
   assert.match(html, /createAmbientAudioController\(document\);/);
   assert.match(cssBlock(".sound-toggle"), /position:\s*fixed/);
-  assert.match(cssBlock(".sound-toggle"), /top:\s*118px/);
+  assert.match(cssBlock(".sound-toggle"), /right:\s*24px/);
+  assert.match(cssBlock(".sound-toggle"), /bottom:\s*30px/);
   assert.match(cssBlock(".sound-toggle"), /border-radius:\s*999px/);
   assert.match(css, /\.sound-toggle__bar\s*\{[\s\S]*?animation:\s*sound-meter/);
   assert.match(css, /\[data-sound-enabled="false"\]\s+\.sound-toggle__bar\s*\{/);
@@ -294,31 +295,21 @@ test("radial flood layer expands from the mobile pill origin", () => {
   const floodEnd = findMatchingCloseTag(floodStart, "div");
   const floodMarkup = html.slice(floodStart, floodEnd);
 
-  assert.match(floodMarkup, /<div class="perimeter perimeter-top perimeter-inverted">/);
+  assert.doesNotMatch(floodMarkup, /perimeter-top/);
   assert.match(cssBlock(".stage-reveal-flood"), /clip-path:\s*circle\(var\(--flood-radius,\s*0px\) at var\(--pill-x,\s*50vw\) var\(--pill-y,\s*90vh\)\)/);
   assert.match(cssBlock(".stage-reveal-flood"), /transition:\s*clip-path 820ms cubic-bezier\(0\.19,\s*1,\s*0\.22,\s*1\)/);
   assert.match(cssBlock(".stage-reveal-flood"), /position:\s*fixed/);
   assert.match(cssBlock(".stage-reveal-flood"), /width:\s*100vw/);
   assert.match(cssBlock(".stage-reveal-flood"), /height:\s*100vh/);
   assert.match(cssBlock(".stage-reveal-flood"), /z-index:\s*200/);
-  assert.match(cssBlock(".perimeter-inverted"), /color:\s*var\(--black\) !important/);
-  assert.match(cssBlock(".perimeter-inverted"), /background:\s*transparent !important/);
   assert.match(css, /\.mobile-reveal-pill\[data-active="true"\]\s*\{[\s\S]*?box-shadow:\s*0 0 40px/);
 });
 
-test("mobile radial flood recolors the fixed top navbar", () => {
-  assert.match(cursorMaskSource, /documentElement\.dataset\.mobileFloodActive = "true"/);
-  assert.match(cursorMaskSource, /documentElement\.dataset\.mobileFloodActive = "false"/);
-  assert.match(css, /:root\[data-mobile-flood-active="true"\]\s+\.perimeter-top\s*\{/);
-  assert.match(
-    css,
-    /:root\[data-mobile-flood-active="true"\]\s+\.perimeter-top\s*\{[\s\S]*?background:\s*transparent/,
-  );
-  assert.match(
-    css,
-    /:root\[data-mobile-flood-active="true"\]\s+\.perimeter-top\s*\{[\s\S]*?backdrop-filter:\s*none/,
-  );
-  assert.match(css, /:root\[data-mobile-flood-active="true"\]\s+\.perimeter-top:not\(\.perimeter-inverted\)\s*\{[\s\S]*?opacity:\s*0/);
+test("top name navbar is removed to keep the landing page chrome minimal", () => {
+  assert.doesNotMatch(html, /class="perimeter perimeter-top/);
+  assert.doesNotMatch(css, /\.perimeter-top\s*\{/);
+  assert.doesNotMatch(css, /\.perimeter-inverted\s*\{/);
+  assert.doesNotMatch(css, /data-mobile-flood-active/);
 });
 
 test("mobile touch viewports hide the custom cursor follower", () => {
@@ -388,18 +379,16 @@ test("mobile parallax does not transform project list rows", () => {
   assert.doesNotMatch(parallaxController, /item\.style\.transform/);
 });
 
-test("top perimeter name stays pinned above viewport overlays", () => {
+test("bottom perimeter remains the only perimeter chrome", () => {
   const bodyStart = indexOfSnippet("<body>");
   const mainStart = indexOfSnippet('<main class="mask-stage" data-mask-root>');
-  const topPerimeterStart = indexOfSnippet('<div class="perimeter perimeter-top" aria-hidden="true">');
+  const bottomPerimeterStart = indexOfSnippet('<div class="perimeter perimeter-bottom" aria-hidden="true">');
 
-  assert.ok(topPerimeterStart > bodyStart && topPerimeterStart < mainStart, "Expected top perimeter outside isolated hero stage");
+  assert.ok(bottomPerimeterStart > mainStart, "Expected bottom perimeter inside main page stage");
   assert.match(cssBlock(".perimeter"), /position:\s*fixed/);
   assert.match(cssBlock(".perimeter"), /z-index:\s*120/);
   assert.match(cssBlock(".perimeter"), /color:\s*var\(--text\)/);
   assert.match(cssBlock(".perimeter"), /text-shadow:\s*0 0 18px var\(--background\)/);
-  assert.match(cssBlock(".perimeter-top"), /top:\s*24px/);
-  assert.match(cssBlock(".perimeter-top"), /padding:\s*10px 12px 14px/);
-  assert.match(cssBlock(".perimeter-top"), /background:\s*color-mix\(in srgb,\s*var\(--background\) 78%, transparent\)/);
-  assert.match(cssBlock(".perimeter-top"), /backdrop-filter:\s*blur\(14px\)/);
+  assert.match(cssBlock(".perimeter-bottom"), /bottom:\s*24px/);
+  assert.match(cssBlock(".perimeter-bottom"), /border-top:\s*1px solid var\(--line\)/);
 });

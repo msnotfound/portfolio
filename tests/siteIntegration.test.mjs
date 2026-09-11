@@ -19,12 +19,12 @@ test("homepage exposes beta hierarchy navigation without replacing the current l
   assert.match(html, /href="\.\/contact\/index\.html"[^>]*>Contact<\/a>/);
   assert.match(html, /I build AI systems/);
   assert.match(css, /\.site-nav\s*\{[\s\S]*?position:\s*fixed/);
+  assert.match(css, /\.site-nav\s*\{[\s\S]*?right:\s*24px/);
   assert.match(css, /\.site-nav\s*\{[\s\S]*?flex-direction:\s*column/);
 });
 
 test("beta page hierarchy is available at the root site paths", () => {
   for (const path of [
-    "nav-component.js",
     "feed/index.html",
     "feed/prototypes.html",
     "notebook/index.html",
@@ -45,5 +45,20 @@ test("copied beta pages retain their original section identities and hierarchy l
   assert.match(readProjectFile("dives/index.html"), /Rewriting the <span class="text-primary glitch-hover inline-block">DOM<\/span> in WebGL/);
   assert.match(readProjectFile("dives/problem.html"), /Post-Mortem/);
   assert.match(readProjectFile("contact/index.html"), /WHAT'S THE PROBLEM/);
-}
-);
+});
+
+test("component pages rely on their own navigation instead of the homepage right rail", () => {
+  for (const path of [
+    "feed/index.html",
+    "feed/prototypes.html",
+    "notebook/index.html",
+    "notebook/obsession.html",
+    "dives/index.html",
+    "dives/problem.html",
+    "contact/index.html",
+  ]) {
+    const file = readProjectFile(path);
+    assert.doesNotMatch(file, /nav-component\.js/, `${path} should not inject the shared beta nav`);
+    assert.doesNotMatch(file, /class="site-nav"/, `${path} should not render the homepage nav`);
+  }
+});

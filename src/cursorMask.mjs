@@ -569,7 +569,6 @@ export function initMobileRadialFlood(pillElement, floodLayer, options = {}) {
   if (!pillElement || !floodLayer) return { destroy() {} };
 
   const view = options.window ?? pillElement.ownerDocument?.defaultView ?? window;
-  const documentElement = pillElement.ownerDocument?.documentElement;
   const holdDelay = options.holdDelay ?? 380;
   const collapseDelay = options.collapseDelay ?? 140;
   let holdTimer = 0;
@@ -585,7 +584,6 @@ export function initMobileRadialFlood(pillElement, floodLayer, options = {}) {
     floodLayer.style.setProperty("--pill-x", origin.xCss);
     floodLayer.style.setProperty("--pill-y", origin.yCss);
     floodLayer.style.setProperty("--flood-radius", options.radius ?? "150vmax");
-    if (documentElement) documentElement.dataset.mobileFloodActive = "true";
     pillElement.dataset.active = "true";
     view.navigator?.vibrate?.([15, 30, 20]);
   };
@@ -610,7 +608,6 @@ export function initMobileRadialFlood(pillElement, floodLayer, options = {}) {
     view.clearTimeout?.(collapseTimer);
     collapseTimer = view.setTimeout(() => {
       floodLayer.style.setProperty("--flood-radius", "0px");
-      if (documentElement) documentElement.dataset.mobileFloodActive = "false";
       pillElement.dataset.active = "false";
     }, collapseDelay);
   };
@@ -627,7 +624,6 @@ export function initMobileRadialFlood(pillElement, floodLayer, options = {}) {
       view.removeEventListener("pointercancel", collapseWave);
       view.clearTimeout?.(holdTimer);
       view.clearTimeout?.(collapseTimer);
-      if (documentElement) documentElement.dataset.mobileFloodActive = "false";
     },
   };
 }

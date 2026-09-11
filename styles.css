@@ -249,15 +249,6 @@ body.is-loading {
   color: color-mix(in srgb, var(--black) 86%, transparent);
 }
 
-.perimeter-inverted {
-  border-bottom-color: color-mix(in srgb, var(--black) 25%, transparent) !important;
-  background: transparent !important;
-  color: var(--black) !important;
-  text-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
 .perimeter {
   position: fixed;
   left: 24px;
@@ -273,15 +264,6 @@ body.is-loading {
   line-height: 1;
   text-shadow: 0 0 18px var(--background);
   text-transform: uppercase;
-}
-
-.perimeter-top {
-  top: 24px;
-  padding: 10px 12px 14px;
-  border-bottom: 1px solid var(--line);
-  background: color-mix(in srgb, var(--background) 78%, transparent);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
 }
 
 .site-nav {
@@ -326,9 +308,9 @@ body.is-loading {
 
 .theme-toggle {
   position: fixed;
-  top: 76px;
-  right: 24px;
-  z-index: 8;
+  bottom: 30px;
+  left: 24px;
+  z-index: 130;
   width: 56px;
   height: 32px;
   border: 1px solid color-mix(in srgb, var(--theme-toggle-accent) 48%, var(--line));
@@ -363,9 +345,9 @@ body.is-loading {
 
 .sound-toggle {
   position: fixed;
-  top: 118px;
+  bottom: 30px;
   right: 24px;
-  z-index: 8;
+  z-index: 130;
   display: grid;
   place-items: center;
   width: 38px;
@@ -919,12 +901,12 @@ h2 em {
   }
 
   .theme-toggle {
-    top: 76px;
-    right: 16px;
+    bottom: 28px;
+    left: 16px;
   }
 
   .sound-toggle {
-    top: 118px;
+    bottom: 28px;
     right: 16px;
   }
 
@@ -1089,18 +1071,6 @@ h2 em {
     background: color-mix(in srgb, var(--acid) 18%, transparent);
     box-shadow: none;
     transform: scale(0.92);
-  }
-
-  :root[data-mobile-flood-active="true"] .perimeter-top {
-    border-bottom-color: transparent;
-    background: transparent;
-    text-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-
-  :root[data-mobile-flood-active="true"] .perimeter-top:not(.perimeter-inverted) {
-    opacity: 0;
   }
 
   .pill-hand-icon {
