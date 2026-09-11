@@ -12,5 +12,6 @@ build/
 .claude/settings.local.json
 .agents/
 .codex/
+.superpowers/
 
 .inspiration/captures/

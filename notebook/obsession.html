@@ -1,0 +1,151 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Newest Obsession - The Laboratory Notebook</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&amp;family=Space+Grotesk:wght@400;700&amp;family=Nanum+Pen+Script&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1C1B18",
+                        "background": "#F4F1EA",
+                        "surface": "#FCFBF8",
+                        "text": "#2D2B26",
+                        "muted": "#9E9889",
+                        "accent": "#E63946",
+                        "highlight": "#D4FF00",
+                    },
+                    fontFamily: {
+                        "heading": ["Special Elite", "monospace"],
+                        "body": ["Space Grotesk", "sans-serif"],
+                        "handwriting": ["Nanum Pen Script", "cursive"],
+                    },
+                    boxShadow: {
+                        "paper": "4px 4px 0px rgba(28, 27, 24, 1)",
+                        "paper-hover": "8px 8px 0px rgba(28, 27, 24, 1)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #F4F1EA;
+            color: #2D2B26;
+            font-family: 'Space Grotesk', sans-serif;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+        }
+        .redaction-line {
+            background-color: #1C1B18;
+            color: transparent;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+        .redaction-line:hover {
+            background-color: transparent;
+            color: #2D2B26;
+            text-decoration: line-through;
+            text-decoration-color: #E63946;
+            text-decoration-thickness: 2px;
+        }
+        .strike-through {
+            text-decoration: line-through;
+            text-decoration-color: #E63946;
+            text-decoration-thickness: 2px;
+        }
+        .mix-blend-multiply {
+            mix-blend-mode: multiply;
+        }
+    </style>
+</head>
+
+
+<body class="min-h-screen relative overflow-x-hidden pt-12 pb-24 px-4 sm:px-8">
+<!-- Minimal Back Button (Focused View Exception) -->
+<a class="absolute top-6 left-6 flex items-center gap-2 text-text hover:text-accent transition-colors font-body font-bold uppercase tracking-widest text-sm z-50" href="index.html">
+<span class="material-symbols-outlined text-xl">arrow_back</span>
+        Return to Desk
+    </a>
+<!-- Main Content Container -->
+<main class="max-w-[800px] mx-auto w-full relative">
+<!-- Header Section -->
+<header class="relative mb-16 mt-12 sm:mt-24">
+<h1 class="font-heading text-5xl sm:text-[64px] text-primary leading-tight underline decoration-primary decoration-4 underline-offset-8 decoration-wavy">
+                Building a Sentient Toaster
+            </h1>
+<!-- Margin Note: Desktop (Absolute left) / Mobile (Inline) -->
+<div class="absolute -left-[180px] top-4 w-[160px] hidden lg:block transform -rotate-6">
+<p class="font-handwriting text-accent text-3xl leading-none">Why?</p>
+<p class="font-handwriting text-accent text-2xl mt-2 leading-tight">Because standard browning levels are arbitrary and lack soul.</p>
+<svg class="absolute -right-8 top-4 w-12 h-12 text-accent stroke-current fill-none" viewBox="0 0 50 50">
+<path d="M5,25 Q25,5 45,25" stroke-linecap="round" stroke-width="2"></path>
+<polygon class="fill-current" points="45,25 35,20 35,30"></polygon>
+</svg>
+</div>
+<!-- Mobile Margin Note -->
+<div class="block lg:hidden mt-6 transform -rotate-2">
+<p class="font-handwriting text-accent text-3xl">Why? Because standard browning levels lack soul.</p>
+</div>
+</header>
+<!-- Body Content -->
+<div class="space-y-12 text-lg leading-relaxed">
+<p>
+                The initial hypothesis was simple: if we can put Doom on a pregnancy test, we can certainly give a standard two-slot toaster a sense of existential dread. The problem isn't the heating coils, it's the 
+                <span class="bg-highlight mix-blend-multiply px-1 font-bold">firmware's complete disregard for the bread's feelings.</span>
+</p>
+<!-- Code Block (Terminal style) -->
+<div class="bg-primary text-background p-6 rounded-sm font-heading text-sm shadow-paper relative transform rotate-1">
+<div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-4 bg-muted/30 backdrop-blur-sm -rotate-2 mix-blend-multiply"></div> <!-- Tape effect -->
+<pre class="overflow-x-auto whitespace-pre-wrap"><code>
+function initializeToasterConsciousness(breadState) {
+    if (breadState.isFrozen) {
+        throw new Error("Bread is too cold. I am shivering.");
+    }
+    
+    // Begin heating cycle with anxiety
+    while(temp &lt; DESIRED_BROWNING) {
+        temp += HEAT_RATE;
+        console.log("Is it burning? I think it's burning.");
+    }
+    return Toast.eject();
+}
+                </code></pre>
+</div>
+<p>
+                As seen above, the core loop is functional. However, during the third iteration, I attempted to interface with the local network to allow the toaster to tweet its complaints. This resulted in a <span class="redaction-line" title="Hover to reveal">catastrophic failure where it attempted to order 500 lbs of sourdough</span>. I've since air-gapped the appliance.
+            </p>
+<!-- Progress Tracker Section -->
+<section class="mt-16 bg-surface p-8 border border-primary shadow-paper transform -rotate-1">
+<h2 class="font-heading text-3xl mb-6 flex items-center gap-3">
+<span class="material-symbols-outlined text-accent text-4xl">checklist</span>
+                    Progress Tracker
+                </h2>
+<div class="space-y-4 font-body">
+<label class="flex items-start gap-4 group cursor-crosshair">
+<input checked="" class="mt-1 h-5 w-5 rounded-none border-2 border-primary text-accent focus:ring-0 bg-transparent checked:bg-[url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9IiNFNjM5NDYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEyLjIwNyA0Ljc5M2ExIDEgMCAwMTAgMS40MTRsLTUgNWExIDEgMCAwMS0xLjQxNCAwbC0yLTJhMSAxIDAgMDExLjQxNC0xLjQxNEw2LjUgOS4wODZsNC4yOTMtNC4yOTNhMSAxIDAgMDExLjQxNCAweiIvPjwvc3ZnPg==')]" disabled="" type="checkbox">
+<span class="text-muted strike-through">Dismantle shell without electrocution</span>
+</label>
+<label class="flex items-start gap-4 group cursor-crosshair">
+<input checked="" class="mt-1 h-5 w-5 rounded-none border-2 border-primary text-accent focus:ring-0 bg-transparent checked:bg-[url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9IiNFNjM5NDYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEyLjIwNyA0Ljc5M2ExIDEgMCAwMTAgMS40MTRsLTUgNWExIDEgMCAwMS0xLjQxNCAwbC0yLTJhMSAxIDAgMDExLjQxNC0xLjQxNEw2LjUgOS4wODZsNC4yOTMtNC4yOTNhMSAxIDAgMDExLjQxNCAweiIvPjwvc3ZnPg==')]" disabled="" type="checkbox">
+<span class="text-muted strike-through">Solder ESP32 to main relay</span>
+<span class="font-handwriting text-accent text-xl absolute ml-2 -mt-2 transform rotate-12">Barely.</span>
+</label>
+<label class="flex items-start gap-4 group cursor-crosshair">
+<input class="mt-1 h-5 w-5 rounded-none border-2 border-primary text-accent focus:ring-0 bg-transparent" disabled="" type="checkbox">
+<span class="text-text">Implement "Panic" mode if toast is stuck</span>
+</label>
+<label class="flex items-start gap-4 group cursor-crosshair">
+<input class="mt-1 h-5 w-5 rounded-none border-2 border-primary text-accent focus:ring-0 bg-transparent" disabled="" type="checkbox">
+<span class="text-text">Train neural net to recognize perfect golden-brown</span>
+</label>
+</div>
+</section>
+</div>
+</main>
+<script src="../nav-component.js"></script></body></html>

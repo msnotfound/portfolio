@@ -1,0 +1,322 @@
+<!DOCTYPE html><html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>IMPULSE // Unfiltered Timeline</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0033FF",
+                        "background-light": "#F4F4F0",
+                        "background-dark": "#0A0A0A",
+                        "surface": "#FFFFFF",
+                        "text-main": "#0A0A0A",
+                        "muted": "#8C8C8C",
+                        "accent": "#FF0055"
+                    },
+                    fontFamily: {
+                        "display": ["Instrument Serif", "serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "0px"
+                    },
+                    boxShadow: {
+                        'hard': '6px 6px 0px #0033FF',
+                        'hard-hover': '8px 8px 0px #0033FF'
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #F4F4F0;
+            color: #0A0A0A;
+            font-family: 'JetBrains Mono', monospace;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F4F4F0;
+            border-left: 2px solid #0A0A0A;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0033FF;
+            border-left: 2px solid #0A0A0A;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0A0A0A;
+        }
+
+        /* Brutalist Details */
+        .border-thick { border: 2px solid #0A0A0A; }
+        .border-thin { border: 1px solid #0A0A0A; }
+        
+        /* Nav Links */
+        .nav-link {
+            position: relative;
+            display: inline-block;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            bottom: -4px;
+            left: 0;
+            background-color: transparent;
+            transition: background-color 0.2s;
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            background-color: #0033FF;
+        }
+
+        /* Glitch Effect on Filter Button */
+        .glitch-btn:active {
+            animation: glitch 0.2s linear infinite;
+            background-color: #FF0055;
+            color: #fff;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+
+        /* Feed Card Interactions */
+        .feed-card {
+            transition: all 0.15s ease-out;
+            transform-origin: center bottom;
+        }
+        .feed-card:hover {
+            border-color: #0033FF;
+            box-shadow: 6px 6px 0px #0033FF;
+            transform: translate(-2px, -2px);
+        }
+        .feed-card:hover img {
+            filter: invert(1) contrast(1.2);
+        }
+
+        /* Scroll Animation Class */
+        .scroll-skew {
+            opacity: 0;
+            transform: translateY(40px) skewY(2deg);
+            transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .scroll-skew.in-view {
+            opacity: 1;
+            transform: translateY(0) skewY(0deg);
+        }
+
+        /* Timeline Node */
+        .timeline-node {
+            position: absolute;
+            left: -33px; /* 32px padding + 1px half border */
+            top: 24px;
+            width: 12px;
+            height: 12px;
+            background-color: #0A0A0A;
+            border-radius: 0;
+            z-index: 10;
+        }
+    </style>
+</head>
+
+
+<body class="antialiased min-h-screen flex flex-col md:flex-row">
+<!-- Loading Overlay (Simulated via JS initially) -->
+<div class="fixed inset-0 bg-primary z-50 flex items-center justify-center transition-opacity duration-200 pointer-events-none" id="loader">
+<span class="text-surface font-mono font-bold text-2xl uppercase tracking-widest animate-pulse">Initializing Timeline...</span>
+</div>
+<!-- Layout Container -->
+<div class="flex w-full max-w-[1600px] mx-auto min-h-screen">
+<!-- SIDEBAR (20%) -->
+<aside class="hidden md:flex flex-col w-1/5 min-w-[280px] border-r-2 border-text-main bg-background-light sticky top-0 h-screen p-8 justify-between">
+<div class="space-y-16">
+<!-- Logo -->
+<div class="flex flex-col">
+<h1 class="font-display italic text-6xl leading-none text-text-main uppercase tracking-tighter">
+                        Impulse
+                    </h1>
+<p class="font-mono text-sm text-primary font-bold mt-2 uppercase tracking-widest">
+                        // Unfiltered Timeline
+                    </p>
+</div>
+<!-- Navigation -->
+<nav class="flex flex-col gap-6 font-mono font-bold uppercase text-lg">
+<a class="nav-link active text-text-main w-max" href="prototypes.html">
+                        &gt; The Feed
+                    </a>
+<a class="nav-link text-muted hover:text-text-main transition-colors w-max" href="prototypes.html">
+                        Quick Prototypes
+                    </a>
+<a class="nav-link text-muted hover:text-text-main transition-colors w-max" href="prototypes.html">
+                        Deep Dives
+                    </a>
+<a class="nav-link text-muted hover:text-text-main transition-colors w-max mt-8" href="prototypes.html">
+                        _Contact
+                    </a>
+</nav>
+</div>
+<!-- Whim Filter -->
+<button class="glitch-btn border-thick bg-text-main text-surface font-mono font-bold py-4 px-6 uppercase text-sm w-full text-center hover:bg-primary transition-colors focus:outline-none">
+                [Sort: High Effort]
+            </button>
+</aside>
+<!-- MAIN CONTENT (80%) -->
+<main class="flex-1 bg-background-light relative w-full md:w-4/5 py-12 px-4 md:px-16 lg:px-32">
+<!-- Timeline Container -->
+<div class="relative w-full max-w-4xl mx-auto border-l-2 border-text-main pl-8 pb-32">
+<!-- ENTRIES -->
+<!-- Entry 1: Media/Video Prototype -->
+<article class="scroll-skew relative mb-24 feed-card bg-surface border-thin p-0 w-full group">
+<div class="timeline-node group-hover:bg-primary transition-colors"></div>
+<!-- Header/Metadata -->
+<div class="border-b-2 border-text-main bg-text-main text-surface flex justify-between items-center p-2 px-4">
+<span class="font-mono text-xs tracking-widest uppercase">WHIM.2023.11.04.02:14</span>
+<span class="font-mono text-xs text-accent">STATUS: OBSESSED</span>
+</div>
+<div class="p-6 md:p-8 space-y-6">
+<h2 class="font-mono font-bold text-2xl uppercase">WebGL Fluid Sim Iteration 42</h2>
+<p class="font-mono text-sm leading-relaxed max-w-2xl">
+                            Spent the last 14 hours trying to optimize this shader. Frame rate is dropping below 30 on older hardware, but the viscosity feel is finally perfect. Might scrap the whole thing tomorrow.
+                        </p>
+<!-- Embedded Asset -->
+<div class="w-full aspect-video border-thin relative overflow-hidden bg-background-dark flex items-center justify-center">
+<webgl-shader class="absolute inset-0 w-full h-full" src="{{DATA:ANIMATION:ANIMATION_2}}"></webgl-shader>
+<div class="absolute inset-0 ring-1 ring-inset ring-text-main/10 pointer-events-none"></div>
+</div>
+<!-- Action Bar -->
+<div class="flex gap-4 pt-4 border-t-2 border-text-main border-dashed">
+<a class="font-mono text-sm font-bold text-primary hover:text-accent uppercase flex items-center gap-2" href="prototypes.html">
+                                [View_Source] <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+</article>
+<!-- Entry 2: Text Rant -->
+<article class="scroll-skew relative mb-24 feed-card bg-surface border-thin p-0 w-full group">
+<div class="timeline-node group-hover:bg-primary transition-colors"></div>
+<div class="border-b-2 border-text-main bg-text-main text-surface flex justify-between items-center p-2 px-4">
+<span class="font-mono text-xs tracking-widest uppercase">WHIM.2023.10.28.14:30</span>
+</div>
+<div class="p-6 md:p-8 space-y-4">
+<h2 class="font-mono font-bold text-xl uppercase">Why does every dashboard look the same?</h2>
+<blockquote class="pl-4 border-l-4 border-primary font-display italic text-3xl leading-tight text-text-main my-6">
+                            "We are drowning in rounded corners and soft drop shadows. Software should feel like machinery, not a marshmallow."
+                        </blockquote>
+<p class="font-mono text-sm leading-relaxed text-muted uppercase">
+                            // Rant concluded. Returning to terminal.
+                        </p>
+</div>
+</article>
+<!-- Entry 3: Image / Hardware hack -->
+<article class="scroll-skew relative mb-24 feed-card bg-surface border-thin p-0 w-full group">
+<div class="timeline-node group-hover:bg-primary transition-colors"></div>
+<div class="border-b-2 border-text-main bg-text-main text-surface flex justify-between items-center p-2 px-4">
+<span class="font-mono text-xs tracking-widest uppercase">WHIM.2023.10.15.09:00</span>
+<span class="font-mono text-xs text-muted">SHIPPED</span>
+</div>
+<div class="p-6 md:p-8 space-y-6">
+<h2 class="font-mono font-bold text-2xl uppercase">Custom Ortholinear Build</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="border-thin h-64 bg-background-light relative overflow-hidden">
+<img alt="Mechanical Keyboard Build" class="absolute inset-0 w-full h-full object-cover transition-all duration-300 grayscale contrast-125" data-alt="A brutally industrial close-up of a custom mechanical keyboard with exposed wires, raw aluminum casing, and stark black unlabelled keycaps. The lighting is harsh and high-contrast, casting sharp shadows on a plain off-white desk surface. The aesthetic is raw, technical, and hacker-centric, avoiding any soft or consumer-friendly design elements." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0pRMXoJ7brgzHQDn7KqZRWamLcjCnONijCWbOSdEblZsVla0DU0_PceB6x2SRTDt_SQod8dILF6H19-3yXHkBY9LFgJlAAwxEMV1Pl1x9dzKWBbi801msW7oAtEkf8fcXsqN6t5b-ZC69wEZfBuC8b6aigD6U5KG6q0AI6D8nlG8KDkcDO7InLkFhBJ9GH6NPcAi8hLlUn_Mko-_UJhyPmGU-Ljy2Q1DwP6Lfxui40QALK_25A-u1kD-7fxBpnPMScpFOfTAAoYg">
+</div>
+<div class="flex flex-col justify-center space-y-4 p-4 border-thin bg-background-light">
+<div class="font-mono text-xs uppercase text-muted mb-2">Specs:</div>
+<ul class="font-mono text-sm space-y-2">
+<li>&gt; Switches: Boba U4T (Lubed)</li>
+<li>&gt; MCU: RP2040</li>
+<li>&gt; Case: CNC Aluminum (Raw)</li>
+<li>&gt; Firmware: ZMK</li>
+</ul>
+</div>
+</div>
+</div>
+</article>
+<!-- Entry 4: Code Snippet -->
+<article class="scroll-skew relative mb-24 feed-card bg-surface border-thin p-0 w-full group">
+<div class="timeline-node group-hover:bg-primary transition-colors"></div>
+<div class="border-b-2 border-text-main bg-text-main text-surface flex justify-between items-center p-2 px-4">
+<span class="font-mono text-xs tracking-widest uppercase">WHIM.2023.10.02.23:59</span>
+<span class="font-mono text-xs text-accent">ABANDONED</span>
+</div>
+<div class="p-0 border-b-thin">
+<div class="bg-background-dark text-[#00ff00] p-6 font-mono text-xs overflow-x-auto">
+<pre><code>function abstractReality(data) {
+    if (!data.context) throw new Error("ERR_NO_CONTEXT");
+    
+    // Attempting to map hyper-dimensional arrays
+    // 03:00 AM logic incoming...
+    const warped = data.nodes.map(n =&gt; n * Math.sin(Date.now()));
+    
+    return warped.filter(w =&gt; w &gt; 0.5); // Good enough?
+}</code></pre>
+</div>
+</div>
+<div class="p-4 bg-background-light">
+<p class="font-mono text-sm text-text-main">Wrote this at 3 AM. Makes zero sense in daylight. Archiving.</p>
+</div>
+</article>
+<!-- End of Feed Indicator -->
+<div class="scroll-skew relative mt-32 flex flex-col items-center justify-center opacity-50">
+<div class="w-4 h-4 bg-text-main mb-4 transform rotate-45"></div>
+<span class="font-mono text-xs uppercase tracking-widest">END_OF_STREAM</span>
+</div>
+</div>
+</main>
+</div>
+<script>
+        // Loading sequence simulation
+        document.addEventListener("DOMContentLoaded", () => {
+            const loader = document.getElementById('loader');
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 200);
+            }, 400); // Quick load
+
+            // Intersection Observer for Scroll Skew Effect
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        // Optional: unobserve if you only want it to happen once
+                        // observer.unobserve(entry.target);
+                    } else {
+                        // Re-add skew when scrolled out of view for continuous effect
+                        entry.target.classList.remove('in-view');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.scroll-skew').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+<script src="../nav-component.js"></script></body></html>

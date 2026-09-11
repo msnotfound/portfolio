@@ -1,0 +1,195 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>The Next Big Thing</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#0637f9",
+          "background-light": "#f5f6f8",
+          "background-dark": "#0f1323",
+          "text-dark": "#0A0A0A",
+          "accent-error": "#FF0055"
+        },
+        fontFamily: {
+          "display": ["JetBrains Mono", "monospace"],
+          "mono": ["JetBrains Mono", "monospace"]
+        },
+        borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem", "sm": "0px"},
+      },
+    },
+  }
+</script>
+<style>
+  body {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  
+  .terminal-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .blinking-cursor {
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* Glitch Effect on Submit */
+  .glitch-transition {
+    animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+  }
+
+  @keyframes glitch {
+    0% { transform: translate(0) }
+    20% { transform: translate(-2px, 2px) }
+    40% { transform: translate(-2px, -2px) }
+    60% { transform: translate(2px, 2px) }
+    80% { transform: translate(2px, -2px) }
+    100% { transform: translate(0) }
+  }
+
+  /* Error Flash */
+  .flash-error {
+    animation: flashError 0.5s ease-out;
+  }
+
+  @keyframes flashError {
+    0% { background-color: #FF0055; }
+    100% { background-color: #0637f9; }
+  }
+  
+  /* Hard Shadow Token */
+  .shadow-hard {
+    box-shadow: 6px 6px 0px #0A0A0A;
+  }
+  
+  .shadow-hard:active {
+    box-shadow: 2px 2px 0px #0A0A0A;
+    transform: translate(4px, 4px);
+  }
+</style>
+</head>
+
+
+<body class="bg-primary text-white h-screen w-full overflow-hidden flex flex-col transition-colors duration-300" id="main-container">
+<!-- Minimal Header for "Focused View" / Back to Main -->
+<header class="w-full p-6 flex justify-between items-center absolute top-0 left-0 z-10">
+<a class="flex items-center gap-2 text-white hover:text-text-dark transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl group-hover:-translate-x-1 transition-transform">arrow_back</span>
+<span class="font-bold tracking-widest uppercase text-sm">Abort</span>
+</a>
+<div class="text-xs tracking-[0.05em] text-white/50 uppercase font-mono">
+      SYS.REQ.001
+    </div>
+</header>
+<!-- Main Terminal Interface -->
+<main class="flex-1 flex flex-col justify-center max-w-[1200px] mx-auto w-full px-6 md:px-12 lg:px-24">
+<div class="flex flex-col gap-8 w-full max-w-[960px]">
+<!-- Terminal Prompt Heading -->
+<h1 class="text-4xl md:text-5xl lg:text-[48px] font-bold leading-tight tracking-tight uppercase break-words" style="line-height: 1.1;">
+        &gt; WHAT'S THE PROBLEM<br>NO ONE ELSE CAN SOLVE?
+      </h1>
+<!-- Input Area -->
+<div class="relative w-full group cursor-text mt-4" id="input-container">
+<textarea class="terminal-input w-full min-h-[200px] bg-transparent border-none text-white text-xl md:text-2xl font-mono leading-relaxed focus:ring-0 focus:outline-none resize-none p-0 m-0" id="terminal-textarea" placeholder="TYPE YOUR OBSESSION HERE..." spellcheck="false"></textarea>
+<!-- Blinking Cursor Overlay (Decorative) -->
+<div class="absolute bottom-4 left-0 pointer-events-none hidden" id="cursor-overlay">
+<span class="text-2xl text-white font-bold blinking-cursor">_</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Action Footer -->
+<footer class="w-full p-6 md:p-12 lg:px-24 pb-12 flex justify-start items-center">
+<button class="bg-text-dark text-white font-bold uppercase tracking-widest text-lg md:text-xl py-6 px-12 rounded-sm border-2 border-text-dark shadow-hard transition-all hover:bg-white hover:text-text-dark focus:outline-none focus:ring-4 focus:ring-white/30" id="submit-btn">
+      DISTRACT ME
+    </button>
+</footer>
+<!-- Notification Area -->
+<div class="absolute top-24 left-1/2 -translate-x-1/2 bg-text-dark text-white px-6 py-3 rounded-sm border border-white hidden font-mono text-sm tracking-wide z-50 transition-opacity duration-300 opacity-0" id="notification-area">
+    SYSTEM OVERRIDE SUCCESSFUL. EXPECT A DELAYED RESPONSE.
+  </div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const textarea = document.getElementById('terminal-textarea');
+    const inputContainer = document.getElementById('input-container');
+    const submitBtn = document.getElementById('submit-btn');
+    const mainContainer = document.getElementById('main-container');
+    const notificationArea = document.getElementById('notification-area');
+    
+    // Focus management
+    inputContainer.addEventListener('click', () => {
+      textarea.focus();
+    });
+
+    // Audio context for keystrokes (optional/simulated)
+    const playKeystroke = () => {
+      // In a real implementation, this would trigger a short synthesized click or Web Audio API tick
+      // console.log('tick');
+    };
+
+    textarea.addEventListener('input', () => {
+      playKeystroke();
+      // Auto-expand textarea
+      textarea.style.height = 'auto';
+      textarea.style.height = (textarea.scrollHeight) + 'px';
+    });
+
+    // Submit Interaction
+    submitBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const content = textarea.value.trim();
+
+      if (content.length === 0) {
+        // Error State
+        mainContainer.classList.add('flash-error');
+        textarea.placeholder = "ERR_ATTENTION_SPAN_DEPLETED. REQUIRES INPUT.";
+        setTimeout(() => {
+          mainContainer.classList.remove('flash-error');
+        }, 500);
+        return;
+      }
+
+      // Loading State
+      submitBtn.innerText = "COMPILING EXCUSES...";
+      submitBtn.classList.add('pointer-events-none', 'opacity-80');
+      document.body.classList.add('glitch-transition');
+
+      // Simulate network request
+      setTimeout(() => {
+        document.body.classList.remove('glitch-transition');
+        submitBtn.innerText = "DISTRACT ME";
+        submitBtn.classList.remove('pointer-events-none', 'opacity-80');
+        
+        // Success Message
+        textarea.value = '';
+        textarea.placeholder = "WAITING FOR NEXT IMPULSE...";
+        
+        notificationArea.classList.remove('hidden');
+        // Trigger reflow
+        void notificationArea.offsetWidth;
+        notificationArea.classList.remove('opacity-0');
+        notificationArea.classList.add('opacity-100');
+
+        setTimeout(() => {
+          notificationArea.classList.remove('opacity-100');
+          notificationArea.classList.add('opacity-0');
+          setTimeout(() => notificationArea.classList.add('hidden'), 300);
+        }, 3000);
+
+      }, 1200);
+    });
+  });
+</script>
+<script src="../nav-component.js"></script></body></html>

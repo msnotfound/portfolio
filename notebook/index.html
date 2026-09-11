@@ -1,0 +1,259 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Research Logs - The Laboratory Notebook</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&amp;family=Special+Elite&amp;family=Nanum+Pen+Script&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#e63746",
+          "background-light": "#f8f6f6",
+          "background-dark": "#211112",
+          "notebook-black": "#1C1B18",
+          "notebook-paper": "#F4F1EA",
+          "notebook-surface": "#FCFBF8",
+          "notebook-text": "#2D2B26",
+          "notebook-muted": "#9E9889",
+          "notebook-red": "#E63946",
+          "notebook-yellow": "#D4FF00",
+        },
+        fontFamily: {
+          "display": ["Space Grotesk", "sans-serif"],
+          "typewriter": ["Special Elite", "monospace"],
+          "handwriting": ["Nanum Pen Script", "cursive"],
+        },
+        boxShadow: {
+          'paper': '4px 4px 0px rgba(28, 27, 24, 1)',
+          'paper-hover': '8px 8px 0px rgba(28, 27, 24, 1)',
+        },
+        borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "0px"},
+      },
+    },
+  }
+</script>
+<style>
+  body {
+    background-color: #F4F1EA;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+    color: #2D2B26;
+  }
+  
+  .blend-multiply {
+    mix-blend-mode: multiply;
+  }
+
+  .rough-edge {
+    filter: url('#roughpaper');
+  }
+
+  .masonry-grid {
+    column-count: 1;
+    column-gap: 1.5rem;
+  }
+  @media (min-width: 768px) {
+    .masonry-grid { column-count: 2; }
+  }
+  @media (min-width: 1024px) {
+    .masonry-grid { column-count: 3; }
+  }
+  .masonry-item {
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+  }
+
+  .thumbtack {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    background: #E63946;
+    border-radius: 50%;
+    box-shadow: inset -2px -2px 4px rgba(0,0,0,0.3), 2px 2px 4px rgba(0,0,0,0.2);
+    z-index: 10;
+  }
+  .thumbtack::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 4px;
+    height: 4px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 50%;
+  }
+
+  /* SVG Filter for rough edges defined in HTML body */
+</style>
+</head>
+
+
+<body class="font-display antialiased min-h-screen flex flex-col md:flex-row overflow-x-hidden">
+<!-- SVG Filter Definition for Rough Edges -->
+<svg aria-hidden="true" focusable="false" style="width:0;height:0;position:absolute;">
+<filter id="roughpaper">
+<feTurbulence baseFrequency="0.04" numOctaves="3" result="noise" type="fractalNoise"></feTurbulence>
+<feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+</filter>
+</svg>
+<!-- Notebook Spine (Nav) -->
+<nav class="md:w-[240px] md:fixed md:h-screen bg-notebook-paper border-b md:border-b-0 md:border-r border-notebook-black shrink-0 flex flex-col p-6 z-20 sticky top-0 md:top-auto">
+<div class="mb-10">
+<h1 class="font-typewriter text-2xl font-bold tracking-tighter text-notebook-black leading-tight">The Lab<br>Notebook</h1>
+<p class="font-handwriting text-notebook-muted text-xl mt-2 transform -rotate-2">Chaotic Desk</p>
+</div>
+<ul class="flex md:flex-col gap-4 overflow-x-auto md:overflow-visible pb-2 md:pb-0 hide-scrollbar">
+<li>
+<a class="relative inline-flex items-center gap-3 text-notebook-black font-bold group" href="obsession.html">
+<span class="material-symbols-outlined group-hover:text-notebook-red transition-colors" data-icon="house" data-size="24px" data-weight="fill" style="font-variation-settings: 'FILL' 1;">house</span>
+<span class="whitespace-nowrap">Research Logs</span>
+<!-- Red circle for active link (simulated with SVG) -->
+<svg class="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-notebook-red pointer-events-none opacity-80" preserveAspectRatio="none" viewBox="0 0 100 40">
+<path class="animate-[dash_3s_ease-out_forwards]" d="M5,20 C10,5 90,5 95,20 C100,35 10,35 5,20 Z" fill="none" stroke="currentColor" stroke-dasharray="250" stroke-dashoffset="0" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</a>
+</li>
+<li>
+<a class="inline-flex items-center gap-3 text-notebook-text hover:text-notebook-black transition-colors group" href="../dives/index.html">
+<span class="material-symbols-outlined text-notebook-muted group-hover:text-notebook-black transition-colors" data-icon="star" data-size="24px" data-weight="regular">star</span>
+<span class="whitespace-nowrap">Newest Obsession</span>
+</a>
+</li>
+<li>
+<a class="inline-flex items-center gap-3 text-notebook-text hover:text-notebook-black transition-colors group" href="#">
+<span class="material-symbols-outlined text-notebook-muted group-hover:text-notebook-black transition-colors" data-icon="book_open" data-size="24px" data-weight="regular">door_open</span>
+<span class="whitespace-nowrap">Deep-Dives</span>
+</a>
+</li>
+<li>
+<a class="inline-flex items-center gap-3 text-notebook-text hover:text-notebook-black transition-colors group" href="#">
+<span class="material-symbols-outlined text-notebook-muted group-hover:text-notebook-black transition-colors" data-icon="folder" data-size="24px" data-weight="regular">folder</span>
+<span class="whitespace-nowrap">Archive</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto hidden md:block pt-10">
+<p class="font-handwriting text-notebook-red text-xl text-center transform rotate-[-5deg]">"Mind the mess."</p>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-[240px] p-4 md:p-8 relative min-h-screen">
+<!-- Current Fixation Pin (Top Right Floating) -->
+<div class="absolute top-4 right-4 md:top-8 md:right-8 z-30 w-64 transform rotate-3 hover:rotate-0 transition-transform duration-300">
+<div class="bg-notebook-yellow border border-notebook-black p-4 shadow-paper rough-edge relative cursor-pointer group">
+<div class="thumbtack"></div>
+<p class="font-typewriter text-xs uppercase tracking-widest border-b border-notebook-black/30 pb-1 mb-2 font-bold">CURRENT FIXATION</p>
+<h2 class="font-display font-bold text-lg leading-tight mb-2 group-hover:underline decoration-2 underline-offset-2">Building a Custom WebGL Shader Engine from Scratch</h2>
+<p class="text-sm text-notebook-text leading-snug">Why use Three.js when you can suffer through bare metal math?</p>
+<span class="absolute -bottom-4 -right-2 font-handwriting text-notebook-red text-xl transform -rotate-12 group-hover:scale-110 transition-transform">Send help!</span>
+</div>
+</div>
+<div class="max-w-[1200px] mx-auto pt-32 md:pt-16">
+<header class="mb-12">
+<h2 class="font-typewriter text-4xl md:text-5xl font-bold mb-4 relative inline-block">
+        Recent Scraps
+        <span class="absolute bottom-1 left-0 w-full h-3 bg-notebook-yellow blend-multiply -z-10 transform -rotate-1"></span>
+</h2>
+<p class="font-handwriting text-2xl text-notebook-muted max-w-lg">Unfiltered thoughts, broken code, and fleeting moments of clarity.</p>
+</header>
+<!-- Masonry Grid -->
+<div class="masonry-grid">
+<!-- Card 1: Code Snippet -->
+<div class="masonry-item">
+<article onclick="location.href='obsession.html'" class="bg-notebook-surface border border-notebook-black p-5 shadow-paper hover:shadow-paper-hover hover:-translate-y-[2px] transition-all duration-200 rough-edge relative transform -rotate-1 cursor-pointer cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<h3 class="font-typewriter text-xl font-bold">CSS Grid Magic</h3>
+<span class="text-xs font-display text-notebook-muted">Oct 24</span>
+</div>
+<p class="text-sm mb-3">Finally figured out subgrid support. It's beautiful but terrifying.</p>
+<div class="bg-notebook-black text-notebook-paper p-3 font-typewriter text-xs overflow-x-auto border-l-4 border-notebook-red">
+<pre><code>.container {
+  display: grid;
+  grid-template-columns: subgrid;
+}</code></pre>
+</div>
+<div class="absolute -right-4 top-10 font-handwriting text-notebook-red text-2xl transform rotate-[15deg]">
+            Works on my machine!
+          </div>
+</article>
+</div>
+<!-- Card 2: Quick Thought -->
+<div class="masonry-item">
+<article onclick="location.href='obsession.html'" class="bg-notebook-surface border border-notebook-black p-5 shadow-paper hover:shadow-paper-hover hover:-translate-y-[2px] transition-all duration-200 rough-edge relative transform rotate-2 cursor-pointer cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-typewriter text-xl font-bold">Idea: Analog Notion</h3>
+<span class="text-xs font-display text-notebook-muted">Oct 22</span>
+</div>
+<p class="text-sm leading-relaxed">What if a productivity tool actively resisted you? Forced you to 'wait for ink to dry' before editing. Might reduce frantic multitasking.</p>
+<div class="mt-4 flex gap-2 flex-wrap">
+<span class="text-xs uppercase bg-notebook-paper border border-notebook-black px-2 py-1 font-bold tracking-wider">Concept</span>
+<span class="text-xs uppercase bg-notebook-paper border border-notebook-black px-2 py-1 font-bold tracking-wider">UX</span>
+</div>
+</article>
+</div>
+<!-- Card 3: Image / Visual Spark -->
+<div class="masonry-item">
+<article onclick="location.href='obsession.html'" class="bg-notebook-surface border border-notebook-black p-2 shadow-paper hover:shadow-paper-hover hover:-translate-y-[2px] transition-all duration-200 rough-edge relative transform -rotate-2 cursor-pointer cursor-pointer">
+<div class="border border-notebook-black bg-notebook-paper aspect-video w-full flex items-center justify-center overflow-hidden relative">
+<div class="w-full h-full bg-cover bg-center" data-alt="A detailed digital art piece showing geometric shapes overlapping like paper cutouts. The color palette is minimal: faded off-white newsprint background, stark carbon black solid shapes, and a single striking accent of neon yellow. The lighting is flat and graphic, emphasizing the harsh edges and textured paper-like appearance. The mood is analytical and chaotic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDGcY6OFGoxYLT1JsDS5sL7pAVsvrvC7Ty_Ocb2ewEL4STvDGela0OdSCFFjOSkbe4xp9p3_NEYZn-G_CCa7urZmrw05TvzjoPs-1reYQfUQC-W8glG8-jYGb9kxFU-jAqH1H7QwOD1QIlZtQOpCFizR2G6-FQUtbeOyDHEv_uFtLoJHQXEFKski9FqhLOq3Zz8CCbEYiPHk-YHfiW3JrkiZQ-unA54V6pvNNZnKFBQZ9Z5U13LPr4IVeJ8F0N3TYGwr1GNy-NrUHM')"></div>
+<!-- Mock tape overlay -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-6 bg-white/40 backdrop-blur-sm border border-notebook-muted/30 transform rotate-3"></div>
+</div>
+<div class="p-3">
+<p class="font-typewriter text-sm font-bold">Inspiration for layout</p>
+<p class="font-handwriting text-lg text-notebook-muted mt-1">Look at those overlapping edges...</p>
+</div>
+</article>
+</div>
+<!-- Card 4: Rant/Text Heavy -->
+<div class="masonry-item">
+<article onclick="location.href='obsession.html'" class="bg-notebook-surface border border-notebook-black p-6 shadow-paper hover:shadow-paper-hover hover:-translate-y-[2px] transition-all duration-200 rough-edge relative transform rotate-1 cursor-pointer cursor-pointer">
+<span class="absolute top-2 left-2 text-notebook-red material-symbols-outlined" data-icon="warning" data-size="20px">warning</span>
+<h3 class="font-typewriter text-xl font-bold ml-6 mb-3">Why are build steps so slow?</h3>
+<p class="text-sm leading-relaxed mb-4">
+            Spent 3 hours debugging Webpack just to compile a 50kb script. I miss dropping a &lt;script&gt; tag and calling it a day. 
+            <span class="bg-notebook-yellow blend-multiply px-1 font-bold">Complexity is killing the joy of building.</span>
+</p>
+<button class="font-display font-bold text-xs uppercase tracking-[0.05em] border-b-2 border-notebook-black pb-0.5 hover:text-notebook-red hover:border-notebook-red transition-colors">
+            Read Full Rant -&gt;
+          </button>
+</article>
+</div>
+<!-- Card 5: Link out -->
+<div class="masonry-item">
+<article onclick="location.href='obsession.html'" class="bg-notebook-surface border border-notebook-black p-5 shadow-paper hover:shadow-paper-hover hover:-translate-y-[2px] transition-all duration-200 rough-edge relative transform -rotate-1 cursor-pointer group cursor-pointer">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-8 h-8 rounded-full border border-notebook-black bg-notebook-paper flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="link">link</span>
+</div>
+<h3 class="font-typewriter text-lg font-bold group-hover:underline">Framer Motion Docs</h3>
+</div>
+<p class="text-sm text-notebook-muted mb-2">Used for the paper unfold animation on the details view.</p>
+<div class="font-handwriting text-notebook-red text-xl line-through decoration-notebook-black decoration-2">
+            Try to write it vanilla JS first
+          </div>
+<div class="font-handwriting text-notebook-black text-xl ml-4">
+            Nevermind, just use the library.
+          </div>
+</article>
+</div>
+<!-- Card 6: Small Note -->
+<div class="masonry-item">
+<article onclick="location.href='obsession.html'" class="bg-notebook-surface border border-notebook-black p-4 shadow-paper hover:shadow-paper-hover hover:-translate-y-[2px] transition-all duration-200 rough-edge relative transform rotate-3 cursor-pointer cursor-pointer">
+<p class="font-handwriting text-2xl leading-tight">
+            Remember to buy more coffee beans.<br>
+<span class="text-notebook-red text-xl">URGENT.</span>
+</p>
+</article>
+</div>
+</div>
+</div>
+</main>
+<script src="../nav-component.js"></script></body></html>

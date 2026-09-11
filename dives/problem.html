@@ -1,0 +1,189 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Post-Mortem: The Caching Nightmare - The Laboratory Notebook</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&amp;family=Special+Elite&amp;family=Nanum+Pen+Script&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@100..900&amp;display=swap" rel="stylesheet">
+<style type="text/tailwindcss">
+        @layer utilities {
+            .font-heading { font-family: 'Special Elite', monospace; }
+            .font-body { font-family: 'Space Grotesk', sans-serif; }
+            .font-handwriting { font-family: 'Nanum Pen Script', cursive; }
+            .shadow-paper { box-shadow: 4px 4px 0px #1C1B18; }
+            .shadow-paper-hover { box-shadow: 8px 8px 0px #1C1B18; }
+            .text-ink { color: #1C1B18; }
+            .bg-paper { background-color: #F4F1EA; }
+            .bg-surface { background-color: #FCFBF8; }
+            .text-faded { color: #2D2B26; }
+            .text-graphite { color: #9E9889; }
+            .text-neon { color: #1C1B18; background-color: #D4FF00; }
+            .border-ink { border-color: #1C1B18; }
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#e63746",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#211112",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+</head>
+
+
+<body class="bg-paper font-body text-faded min-h-screen selection:bg-[#D4FF00] selection:text-[#1C1B18]">
+<!-- Minimal Back-to-Main Header for Focused View -->
+<header class="w-full px-6 py-4 flex items-center border-b border-ink/10 bg-surface/80 backdrop-blur-sm sticky top-0 z-50">
+<a class="flex items-center gap-2 text-ink hover:text-primary transition-colors group" href="#">
+<span class="material-symbols-outlined text-xl group-hover:-translate-x-1 transition-transform">arrow_back</span>
+<span class="font-bold uppercase tracking-widest text-sm">Return to Desk</span>
+</a>
+</header>
+<main class="max-w-[1200px] mx-auto px-4 md:px-8 py-12">
+<!-- Header Section -->
+<header class="mb-16 relative">
+<h1 class="font-heading text-5xl md:text-6xl text-ink leading-tight mb-4 underline decoration-4 decoration-ink/20">Post-Mortem: <br><span class="relative">The Caching Nightmare<span class="absolute -top-6 -right-12 font-handwriting text-primary text-3xl rotate-12 opacity-80">it burns!</span></span></h1>
+<div class="flex items-center gap-4 text-graphite text-sm font-bold uppercase tracking-wider">
+<time datetime="2023-10-24">October 24, 2023</time>
+<span>•</span>
+<span>Severity: HIGH</span>
+</div>
+<!-- Floating Annotation -->
+<div class="absolute -left-12 top-24 font-handwriting text-primary text-2xl -rotate-6 w-32 hidden lg:block mix-blend-multiply">
+                I lost 3 days to this. Never again.
+            </div>
+</header>
+<!-- The Abstract Box -->
+<section class="bg-surface border-2 border-ink shadow-paper p-6 md:p-8 mb-16 rounded-DEFAULT relative">
+<h2 class="font-heading text-2xl text-ink mb-4 absolute -top-4 left-6 bg-surface px-2">Abstract</h2>
+<p class="text-lg leading-relaxed text-faded">
+                A simple attempt to speed up the dashboard endpoint using Redis turned into a distributed locking catastrophe. We implemented caching without fully understanding the invalidation lifecycle across multiple container instances, leading to phantom data, race conditions, and an eventual cascading failure of the entire staging environment. 
+                <span class="bg-[#D4FF00] text-ink font-bold px-1 rounded-sm">Solution: Embrace simplicity, avoid distributed locks unless strictly necessary, and use a TTL strategy that makes sense.</span>
+</p>
+</section>
+<!-- 60/40 Layout -->
+<div class="flex flex-col lg:flex-row gap-12 items-start">
+<!-- Left Column: The Narrative (60%) -->
+<article class="w-full lg:w-[60%] flex flex-col gap-10">
+<!-- Hypothesis vs Reality -->
+<div class="flex flex-col md:flex-row gap-6 bg-surface p-6 border border-ink/20 rounded-DEFAULT">
+<div class="flex-1">
+<h3 class="font-bold text-ink uppercase tracking-wider mb-2 border-b border-ink/10 pb-2">The Hypothesis</h3>
+<p class="text-sm">"If we cache the expensive aggregation query in Redis for 5 minutes, dashboard load times will drop from 3s to &lt;100ms, and everyone will be happy."</p>
+</div>
+<div class="hidden md:block w-px bg-ink/20"></div>
+<div class="flex-1 relative">
+<h3 class="font-bold text-ink uppercase tracking-wider mb-2 border-b border-ink/10 pb-2">The Reality</h3>
+<p class="text-sm">We cached it. But when a user updated their data, Instance A invalidated the cache while Instance B simultaneously repopulated it with stale data.</p>
+<span class="absolute -right-4 -bottom-4 font-handwriting text-primary text-xl rotate-[15deg]">Oops.</span>
+</div>
+</div>
+<div class="space-y-6">
+<h3 class="font-heading text-3xl text-ink">The Initial Implementation</h3>
+<p class="leading-relaxed">
+                        The goal was straightforward. The dashboard was struggling under the weight of a horrific set of JOINs. I figured a quick Redis implementation would act as a band-aid until we could properly optimize the database schema.
+                    </p>
+<p class="leading-relaxed">
+                        I wrapped the service call in a basic caching decorator. It checked Redis, returned if found, or executed the query and stored the result. Simple, right?<a class="text-primary font-bold text-sm align-super hover:underline mx-1" href="#ref-1">[1]</a>
+</p>
+</div>
+<!-- Pull Quote -->
+<blockquote class="pl-6 border-l-4 border-[#D4FF00] py-2 my-4 relative">
+<p class="font-heading text-2xl text-ink leading-snug">
+                        "It works on my machine."
+                    </p>
+<cite class="block mt-2 text-sm text-graphite uppercase tracking-widest font-bold">— Famous last words</cite>
+<span class="absolute -left-3 top-0 font-handwriting text-primary text-lg -rotate-12">Narrator: It didn't.</span>
+</blockquote>
+<div class="space-y-6">
+<h3 class="font-heading text-3xl text-ink">The Race Condition</h3>
+<p class="leading-relaxed">
+                        Things started failing immediately in staging. The issue manifested as a flicker. You'd update a setting, see the change, refresh, and the old setting was back. 
+                    </p>
+<p class="leading-relaxed relative">
+                        Because we were running three instances of the backend API behind a load balancer, <span class="line-through decoration-primary decoration-2">we didn't account for concurrent writes</span> we built a beautifully efficient system for serving stale data rapidly. When an update occurred, we fired off an invalidation command. But if another instance was mid-query to populate the cache, it would write the old data back *after* the invalidation happened.
+                    </p>
+</div>
+<div class="space-y-6">
+<h3 class="font-heading text-3xl text-ink">The Fix</h3>
+<p class="leading-relaxed">
+                        We initially tried distributed locks (Redlock)<a class="text-primary font-bold text-sm align-super hover:underline mx-1" href="#ref-2">[2]</a>, which only added complexity and latency, defeating the purpose of the cache. 
+                        Ultimately, we moved to a simpler pattern: <strong class="bg-[#D4FF00]/50 px-1 rounded-sm">Versioned Cache Keys</strong>.
+                    </p>
+<p class="leading-relaxed">
+                        Instead of explicitly invalidating, every time a user updates their settings, we increment a version integer in Redis. The cache key for their dashboard is tied to that version. Old data just falls out via TTL. No race conditions, no locks, just peace.
+                    </p>
+</div>
+</article>
+<!-- Right Column: Evidence & Diagrams (40%) -->
+<aside class="w-full lg:w-[40%] lg:sticky lg:top-24 flex flex-col gap-8">
+<!-- Code Snippet -->
+<div class="bg-surface border border-ink shadow-paper rounded-DEFAULT overflow-hidden group">
+<div class="bg-ink text-paper px-4 py-2 font-mono text-xs flex justify-between items-center">
+<span>naive_cache.py</span>
+<span class="material-symbols-outlined text-primary text-sm group-hover:rotate-180 transition-transform duration-500">warning</span>
+</div>
+<pre class="p-4 text-sm font-mono text-faded overflow-x-auto"><code>def get_dashboard(user_id):
+    key = f"dash:{user_id}"
+    
+    <span class="text-primary"># BAD: Race condition waiting to happen</span>
+    if redis.exists(key):
+        return redis.get(key)
+        
+    data = heavy_db_query(user_id)
+    redis.set(key, data, ex=300)
+    return data</code></pre>
+</div>
+<!-- Animated SVG Diagram -->
+<div class="bg-surface border border-ink p-4 shadow-paper rounded-DEFAULT relative">
+<div class="absolute -top-3 -right-3 font-handwriting text-primary text-xl rotate-[10deg] bg-paper px-2 z-10">
+                        The Loop of Despair
+                    </div>
+<animated-svg class="w-full h-48 rounded-DEFAULT border border-ink/10" src="{{DATA:ANIMATION:ANIMATION_0}}"></animated-svg>
+<p class="text-center text-xs text-graphite mt-3 font-mono">Fig 1. Instance A vs Instance B</p>
+</div>
+<!-- The Fix Code -->
+<div class="bg-surface border border-ink shadow-paper rounded-DEFAULT overflow-hidden">
+<div class="bg-ink text-paper px-4 py-2 font-mono text-xs flex justify-between items-center">
+<span>versioned_cache.py</span>
+<span class="material-symbols-outlined text-[#D4FF00] text-sm">check_circle</span>
+</div>
+<pre class="p-4 text-sm font-mono text-faded overflow-x-auto"><code>def get_dashboard(user_id):
+    version = redis.get(f"user_v:{user_id}") or 1
+    key = f"dash:{user_id}:v{version}"
+    
+    if data := redis.get(key):
+        return data
+        
+    data = heavy_db_query(user_id)
+    redis.set(key, data, ex=300)
+    return data</code></pre>
+</div>
+</aside>
+</div>
+<!-- Footnotes / References -->
+<footer class="mt-24 pt-8 border-t border-ink/20">
+<h4 class="font-heading text-xl text-ink mb-4">References</h4>
+<ol class="list-decimal list-inside space-y-2 text-sm text-faded">
+<li class="pl-2" id="ref-1">
+<span class="font-bold">Initial implementation notes:</span> See commit <code>a8f9c21</code>. I was very confident.
+                </li>
+<li class="pl-2" id="ref-2">
+<span class="font-bold">Distributed Locks with Redis:</span> <a class="text-primary hover:underline decoration-dashed underline-offset-2" href="#">Redis documentation on Redlock</a>. (A good read, but overkill for our specific problem).
+                </li>
+</ol>
+</footer>
+</main>
+<script src="../nav-component.js"></script></body></html>

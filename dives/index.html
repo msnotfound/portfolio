@@ -1,0 +1,310 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Deep Dives - The Impulse Feed</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#0637f9",
+          "background-light": "#f5f6f8",
+          "background-dark": "#0f1323",
+          "deep-ink": "#0a0a0a",
+          "newsprint": "#f4f4f0",
+          "panic-pink": "#ff0055"
+        },
+        fontFamily: {
+          "display": ["JetBrains Mono", "monospace"],
+          "serif": ["Instrument Serif", "serif"],
+          "mono": ["JetBrains Mono", "monospace"]
+        },
+        borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+      },
+    },
+  }
+</script>
+<style>
+  body {
+    background-color: theme('colors.newsprint');
+    color: theme('colors.deep-ink');
+    font-family: theme('fontFamily.mono');
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: theme('colors.primary');
+    color: white;
+  }
+
+  /* Sweeping Hover Link */
+  .sweep-link {
+    position: relative;
+    color: theme('colors.deep-ink');
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    z-index: 1;
+    transition: color 0.2s ease;
+  }
+
+  .sweep-link::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background-color: theme('colors.primary');
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  .sweep-link:hover {
+    color: white;
+    text-decoration-color: transparent;
+  }
+
+  .sweep-link:hover::before {
+    transform: scaleX(1);
+  }
+
+  /* Typography Glitch */
+  .glitch-hover:hover {
+    animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+    color: theme('colors.primary');
+    text-shadow: 2px 2px theme('colors.panic-pink'), -2px -2px theme('colors.deep-ink');
+  }
+
+  @keyframes glitch-skew {
+    0% { transform: skew(0deg); }
+    20% { transform: skew(-10deg); }
+    40% { transform: skew(10deg); }
+    60% { transform: skew(-5deg); }
+    80% { transform: skew(5deg); }
+    100% { transform: skew(0deg); }
+  }
+
+  /* Marquee Animation */
+  .marquee-content {
+    display: flex;
+    white-space: nowrap;
+    animation: scroll-left 20s linear infinite;
+  }
+
+  @keyframes scroll-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  
+  /* Typewriter effect class */
+  .typewriter-ready {
+    opacity: 0;
+  }
+</style>
+</head>
+
+
+<body class="antialiased min-h-screen relative selection:bg-primary selection:text-white pb-32">
+<!-- Shared TopNavBar (Included based on Relevance Test - Browsing screen) -->
+<div class="relative flex h-auto w-full flex-col bg-newsprint group/design-root overflow-x-hidden font-mono z-50">
+<div class="layout-container flex h-full grow flex-col">
+<div class="px-40 flex flex-1 justify-center py-5 border-b-2 border-deep-ink">
+<div class="layout-content-container flex flex-col w-full flex-1 max-w-[1200px]">
+<header class="flex items-center justify-between whitespace-nowrap px-10 py-3">
+<div class="flex items-center gap-4 text-deep-ink">
+<div class="size-6">
+<svg class="text-primary" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-deep-ink text-xl font-bold leading-tight tracking-[-0.015em] uppercase font-mono">The Impulse Feed</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<div class="flex items-center gap-9 font-mono">
+<a class="text-deep-ink text-sm font-bold leading-normal hover:text-primary transition-colors underline decoration-2 underline-offset-4" href="problem.html">Home</a>
+<a class="text-deep-ink text-sm font-bold leading-normal hover:text-primary transition-colors underline decoration-2 underline-offset-4" href="problem.html">Quick Prototypes</a>
+<a class="text-deep-ink text-sm font-bold leading-normal hover:text-primary transition-colors underline decoration-2 underline-offset-4" href="problem.html">Contact</a>
+</div>
+</div>
+</header>
+</div>
+</div>
+</div>
+</div>
+<main class="w-full relative">
+<!-- Hero Section -->
+<section class="w-full pt-32 pb-16 relative overflow-hidden">
+<div class="max-w-[680px] mx-auto px-6 relative z-10">
+<div class="inline-block bg-deep-ink text-white px-2 py-1 text-xs mb-8 uppercase tracking-widest font-mono">
+        DEEP.DIVE.042 // SHIPPED // 2024.03.15
+      </div>
+</div>
+<!-- Edge Breaking Title -->
+<div class="pl-[calc(50vw-340px)] w-[150vw]">
+<h1 class="font-serif italic text-[80px] md:text-[120px] leading-[0.85] text-deep-ink whitespace-nowrap tracking-tighter">
+        Rewriting the <span class="text-primary glitch-hover inline-block">DOM</span> in WebGL
+      </h1>
+</div>
+</section>
+<!-- Velocity Marquee -->
+<div class="w-full border-y-2 border-deep-ink bg-white overflow-hidden py-3 my-12" id="tech-marquee-container">
+<div class="marquee-content font-mono text-sm uppercase font-bold tracking-wider text-deep-ink" id="tech-marquee">
+<span class="mx-4">THREE.JS</span> <span class="mx-4 text-primary">•</span>
+<span class="mx-4">REACT FIBER</span> <span class="mx-4 text-primary">•</span>
+<span class="mx-4">CUSTOM SHADERS</span> <span class="mx-4 text-primary">•</span>
+<span class="mx-4">ZUSTAND</span> <span class="mx-4 text-primary">•</span>
+<span class="mx-4">WEB WORKERS</span> <span class="mx-4 text-primary">•</span>
+<span class="mx-4">GLSL</span> <span class="mx-4 text-primary">•</span>
+<span class="mx-4">OBSESSIVE COMPULSION</span> <span class="mx-4 text-primary">•</span>
+<!-- Duplicate for infinite loop -->
+<span class="mx-4">THREE.JS</span> <span class="mx-4 text-primary">•</span>
+<span class="mx-4">REACT FIBER</span> <span class="mx-4 text-primary">•</span>
+<span class="mx-4">CUSTOM SHADERS</span> <span class="mx-4 text-primary">•</span>
+<span class="mx-4">ZUSTAND</span> <span class="mx-4 text-primary">•</span>
+<span class="mx-4">WEB WORKERS</span> <span class="mx-4 text-primary">•</span>
+<span class="mx-4">GLSL</span> <span class="mx-4 text-primary">•</span>
+<span class="mx-4">OBSESSIVE COMPULSION</span> <span class="mx-4 text-primary">•</span>
+</div>
+</div>
+<!-- Body Content -->
+<article class="max-w-[680px] mx-auto px-6 font-mono text-[14px] leading-relaxed text-deep-ink space-y-12">
+<div class="typewriter-ready" id="p1">
+<p class="mb-6">
+        The browser is a marvel of engineering, but let's be honest: the DOM is slow. When you're trying to render 100,000 independent moving particles that also need to act as interactive UI elements, standard HTML/CSS falls apart. The garbage collector panics, the main thread locks up, and the user's laptop fan spins up like a jet engine.
+      </p>
+<p>
+        I decided I didn't want to use the DOM anymore. I wanted to build a UI entirely inside a WebGL canvas, bypassing the layout engine entirely. This is the story of how I lost three weeks of my life to matrix multiplication.
+      </p>
+</div>
+<!-- Brutalist Blockquote -->
+<blockquote class="border-l-[6px] border-primary pl-8 py-2 my-16">
+<p class="font-serif italic text-4xl leading-tight text-deep-ink mb-4">
+        "At 3 AM, I realized I was writing my own text-wrapping algorithm in GLSL. That's when I knew I had gone too far."
+      </p>
+<cite class="text-xs uppercase tracking-widest text-muted block font-mono font-bold">— Commit message, Day 14</cite>
+</blockquote>
+<div class="typewriter-ready" id="p2">
+<h3 class="font-bold uppercase text-xl mb-4 border-b-2 border-deep-ink inline-block pb-1">The Architecture</h3>
+<p class="mb-6">
+        To make this work, I had to essentially rebuild a minimalist version of the browser's rendering engine. I created a hierarchical scene graph where every "div" was a PlaneGeometry, and text was rendered using Signed Distance Fields (SDF) to keep it crisp at any zoom level.
+      </p>
+</div>
+<!-- Schematic Diagram -->
+<figure class="my-16 border-2 border-deep-ink p-4 bg-white relative group rounded-sm" style="box-shadow: 6px 6px 0px #0637f9;">
+<div class="absolute -top-3 -right-3 bg-primary text-white text-xs px-2 py-1 font-bold">FIG 01. SCENE GRAPH</div>
+<div class="aspect-video w-full bg-newsprint relative overflow-hidden border border-deep-ink border-dashed flex items-center justify-center group-hover:invert transition-all duration-300">
+<!-- Abstract Schematic representation -->
+<svg class="w-full h-full p-8" fill="none" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+<rect height="40" stroke="#0a0a0a" stroke-width="2" width="100" x="150" y="20"></rect>
+<text fill="#0a0a0a" font-family="monospace" font-size="12" text-anchor="middle" x="200" y="45">ROOT_CANVAS</text>
+<path d="M200 60 V 90" stroke="#0637f9" stroke-width="2"></path>
+<path d="M100 90 H 300" stroke="#0637f9" stroke-width="2"></path>
+<path d="M100 90 V 120" stroke="#0637f9" stroke-width="2"></path>
+<path d="M200 90 V 120" stroke="#0637f9" stroke-width="2"></path>
+<path d="M300 90 V 120" stroke="#0637f9" stroke-width="2"></path>
+<rect height="40" stroke="#0a0a0a" stroke-width="2" width="100" x="50" y="120"></rect>
+<text fill="#0a0a0a" font-family="monospace" font-size="12" text-anchor="middle" x="100" y="145">UI_LAYER</text>
+<rect height="40" stroke="#0a0a0a" stroke-width="2" width="100" x="150" y="120"></rect>
+<text fill="#0a0a0a" font-family="monospace" font-size="12" text-anchor="middle" x="200" y="145">TEXT_SDF</text>
+<rect height="40" stroke="#0a0a0a" stroke-width="2" width="100" x="250" y="120"></rect>
+<text fill="#0a0a0a" font-family="monospace" font-size="12" text-anchor="middle" x="300" y="145">PARTICLES</text>
+</svg>
+</div>
+<figcaption class="text-xs mt-4 text-muted border-t border-deep-ink pt-2">
+<span class="text-primary font-bold">INFO:</span> Decoupling the interaction layer from the render loop via OffscreenCanvas.
+      </figcaption>
+</figure>
+<div class="typewriter-ready" id="p3">
+<p class="mb-6">
+        Event delegation was another nightmare. Since there's only one actual DOM element (the canvas), I had to cast a ray from the mouse position through the camera frustum on every pointer move, intersecting it against bounding boxes mapped to the "virtual" DOM elements.
+      </p>
+<p>
+        I used a spatial hash grid to optimize the raycasting, which kept the frame rate locked at 60fps even with 10k interactive nodes. You can read more about that approach in <a class="sweep-link font-bold" href="problem.html">this excellent breakdown of spatial partitioning</a>.
+      </p>
+</div>
+<!-- Code Snippet -->
+<div class="my-16">
+<div class="bg-deep-ink text-white p-2 text-xs flex justify-between items-center border-b border-muted">
+<span>src/core/Raycaster.ts</span>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-[16px]">content_copy</span></button>
+</div>
+<pre class="bg-[#0f1323] text-[#a9b7c6] p-6 overflow-x-auto text-[13px] leading-relaxed rounded-b-sm border-2 border-t-0 border-deep-ink" style="box-shadow: 6px 6px 0px #0637f9;"><code><span class="text-[#cc7832]">export function</span> <span class="text-[#ffc66d]">intersectVirtualDOM</span>(
+  pointer: Vector2, 
+  camera: Camera, 
+  sceneGraph: VirtualNode[]
+) {
+  <span class="text-[#808080]">// Normalized Device Coordinates</span>
+  _raycaster.setFromCamera(pointer, camera);
+
+  <span class="text-[#808080]">// The brutal reality of O(N) checking</span>
+  <span class="text-[#cc7832]">const</span> hits = [];
+  <span class="text-[#cc7832]">for</span> (<span class="text-[#cc7832]">let</span> i = <span class="text-[#6897bb]">0</span>; i &lt; sceneGraph.length; i++) {
+    <span class="text-[#cc7832]">const</span> node = sceneGraph[i];
+    <span class="text-[#cc7832]">if</span> (node.isInteractive &amp;&amp; checkBounds(node, _raycaster.ray)) {
+      hits.push(node);
+    }
+  }
+  
+  <span class="text-[#cc7832]">return</span> hits.sort((a, b) =&gt; b.zIndex - a.zIndex)[<span class="text-[#6897bb]">0</span>];
+}</code></pre>
+</div>
+<div class="typewriter-ready" id="p4">
+<h3 class="font-bold uppercase text-xl mb-4 border-b-2 border-deep-ink inline-block pb-1 text-panic-pink">The Breaking Point</h3>
+<p class="mb-6">
+        It all worked beautifully until I tried to implement accessibility. Trying to map a complex WebGL scene graph to an invisible, screen-reader-friendly DOM tree in real-time proved to be a sync nightmare. The state drift between the visual representation and the a11y layer was unacceptable.
+      </p>
+<p>
+        Ultimately, I abandoned the project. It remains a fascinating monument to over-engineering. The repo is public if you want to poke at the corpse.
+      </p>
+<div class="mt-12 flex items-center gap-4">
+<a class="inline-flex items-center gap-2 border-2 border-deep-ink bg-transparent px-6 py-3 font-bold uppercase text-sm hover:bg-primary hover:text-white hover:border-primary transition-all duration-200" href="problem.html" style="box-shadow: 4px 4px 0px #0a0a0a;">
+          View on GitHub <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<span class="text-xs text-panic-pink border border-panic-pink px-2 py-1 bg-white">STATUS: BORED NOW</span>
+</div>
+</div>
+</article>
+</main>
+<script>
+  // Marquee Scroll Velocity Logic
+  document.addEventListener('DOMContentLoaded', () => {
+    const marquee = document.getElementById('tech-marquee');
+    let baseSpeed = 20; // Base animation duration in seconds
+    let scrollTimeout;
+    
+    window.addEventListener('scroll', () => {
+      // Increase speed on scroll by reducing animation duration
+      marquee.style.animationDuration = '5s';
+      
+      // Reset after scrolling stops
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        marquee.style.animationDuration = baseSpeed + 's';
+      }, 150);
+    });
+
+    // Typewriter effect simulation for paragraphs
+    const paragraphs = document.querySelectorAll('.typewriter-ready');
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.transition = 'opacity 0.5s ease-in';
+          entry.target.style.opacity = 1;
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    paragraphs.forEach(p => observer.observe(p));
+  });
+</script>
+<script src="../nav-component.js"></script></body></html>
