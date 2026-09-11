@@ -217,11 +217,13 @@ body.is-loading {
 }
 
 .stage-reveal-flood {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 7;
+  z-index: 200;
   display: flex;
   align-items: center;
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
   padding: clamp(112px, 11vh, 144px) clamp(20px, 6vw, 84px) clamp(88px, 10vh, 128px);
   background:
@@ -245,6 +247,15 @@ body.is-loading {
 .stage-reveal-flood .hero-grid {
   border-top-color: color-mix(in srgb, var(--black) 34%, transparent);
   color: color-mix(in srgb, var(--black) 86%, transparent);
+}
+
+.perimeter-inverted {
+  border-bottom-color: color-mix(in srgb, var(--black) 25%, transparent) !important;
+  background: transparent !important;
+  color: var(--black) !important;
+  text-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .perimeter {
@@ -954,7 +965,7 @@ h2 em {
     position: fixed;
     bottom: 28px;
     left: 50%;
-    z-index: 90;
+    z-index: 210;
     display: grid;
     place-items: center;
     width: 92px;
@@ -1040,10 +1051,15 @@ h2 em {
   }
 
   :root[data-mobile-flood-active="true"] .perimeter-top {
-    border-bottom-color: color-mix(in srgb, var(--black) 28%, transparent);
-    background: color-mix(in srgb, var(--acid) 86%, white 14%);
-    color: var(--black);
+    border-bottom-color: transparent;
+    background: transparent;
     text-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  :root[data-mobile-flood-active="true"] .perimeter-top:not(.perimeter-inverted) {
+    opacity: 0;
   }
 
   .pill-hand-icon {

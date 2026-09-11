@@ -240,16 +240,18 @@ test("mobile uses touch reveal instead of forcing the alternate hero layer open"
   const mainStart = indexOfSnippet('<main class="mask-stage" data-mask-root>');
   const topVignette = indexOfSnippet('<div class="screen-vignette screen-vignette-top" aria-hidden="true"></div>');
   const bottomVignette = indexOfSnippet('<div class="screen-vignette screen-vignette-bottom" aria-hidden="true"></div>');
+  const floodStart = indexOfSnippet('<div class="stage-reveal-flood" data-reveal-flood aria-hidden="true">');
 
   assert.ok(topVignette > bodyStart && topVignette < mainStart, "Expected top vignette at body level");
   assert.ok(bottomVignette > bodyStart && bottomVignette < mainStart, "Expected bottom vignette at body level");
+  assert.ok(floodStart > bodyStart && floodStart < mainStart, "Expected radial flood overlay at body level");
   assert.doesNotMatch(
     html,
     /enableMobileTouchReveal\(root\.querySelector\("\[data-mask-target\]"\), root\.querySelector\("\[data-mask-surface\]"\),/,
   );
   assert.match(
     html,
-    /initMobileRadialFlood\(document\.querySelector\("\[data-mobile-trigger\]"\), root\.querySelector\("\[data-reveal-flood\]"\),/,
+    /initMobileRadialFlood\(document\.querySelector\("\[data-mobile-trigger\]"\), document\.querySelector\("\[data-reveal-flood\]"\),/,
   );
   assert.match(html, /<div class="stage-reveal-flood" data-reveal-flood aria-hidden="true">/);
   assert.match(html, /createMobileParallaxController\(document\);/);
@@ -288,8 +290,19 @@ test("mobile reveal pill floats at the bottom thumb zone on touch viewports", ()
 });
 
 test("radial flood layer expands from the mobile pill origin", () => {
+  const floodStart = indexOfSnippet('<div class="stage-reveal-flood" data-reveal-flood aria-hidden="true">');
+  const floodEnd = findMatchingCloseTag(floodStart, "div");
+  const floodMarkup = html.slice(floodStart, floodEnd);
+
+  assert.match(floodMarkup, /<div class="perimeter perimeter-top perimeter-inverted">/);
   assert.match(cssBlock(".stage-reveal-flood"), /clip-path:\s*circle\(var\(--flood-radius,\s*0px\) at var\(--pill-x,\s*50vw\) var\(--pill-y,\s*90vh\)\)/);
   assert.match(cssBlock(".stage-reveal-flood"), /transition:\s*clip-path 820ms cubic-bezier\(0\.19,\s*1,\s*0\.22,\s*1\)/);
+  assert.match(cssBlock(".stage-reveal-flood"), /position:\s*fixed/);
+  assert.match(cssBlock(".stage-reveal-flood"), /width:\s*100vw/);
+  assert.match(cssBlock(".stage-reveal-flood"), /height:\s*100vh/);
+  assert.match(cssBlock(".stage-reveal-flood"), /z-index:\s*200/);
+  assert.match(cssBlock(".perimeter-inverted"), /color:\s*var\(--black\) !important/);
+  assert.match(cssBlock(".perimeter-inverted"), /background:\s*transparent !important/);
   assert.match(css, /\.mobile-reveal-pill\[data-active="true"\]\s*\{[\s\S]*?box-shadow:\s*0 0 40px/);
 });
 
@@ -299,12 +312,13 @@ test("mobile radial flood recolors the fixed top navbar", () => {
   assert.match(css, /:root\[data-mobile-flood-active="true"\]\s+\.perimeter-top\s*\{/);
   assert.match(
     css,
-    /:root\[data-mobile-flood-active="true"\]\s+\.perimeter-top\s*\{[\s\S]*?color:\s*var\(--black\)/,
+    /:root\[data-mobile-flood-active="true"\]\s+\.perimeter-top\s*\{[\s\S]*?background:\s*transparent/,
   );
   assert.match(
     css,
-    /:root\[data-mobile-flood-active="true"\]\s+\.perimeter-top\s*\{[\s\S]*?background:\s*color-mix\(in srgb,\s*var\(--acid\) 86%, white 14%\)/,
+    /:root\[data-mobile-flood-active="true"\]\s+\.perimeter-top\s*\{[\s\S]*?backdrop-filter:\s*none/,
   );
+  assert.match(css, /:root\[data-mobile-flood-active="true"\]\s+\.perimeter-top:not\(\.perimeter-inverted\)\s*\{[\s\S]*?opacity:\s*0/);
 });
 
 test("mobile touch viewports hide the custom cursor follower", () => {
