@@ -168,7 +168,7 @@ test("teleprompter CSS uses discrete word states with reduced-motion fallback", 
   );
 });
 
-test("page exposes a persistent theme toggle", () => {
+test("page exposes a non-sticky upper-left theme toggle", () => {
   assert.match(html, /<html lang="en" data-theme="dark">/);
   assert.match(
     html,
@@ -177,8 +177,11 @@ test("page exposes a persistent theme toggle", () => {
   assert.match(html, /import \{ initThemeToggle \} from "\.\/src\/themeToggle\.mjs";/);
   assert.match(html, /initThemeToggle\(document\);/);
   assert.match(css, /\[data-theme="light"\]\s*\{/);
-  assert.match(cssBlock(".theme-toggle"), /bottom:\s*30px/);
+  assert.match(cssBlock(".theme-toggle"), /position:\s*absolute/);
+  assert.match(cssBlock(".theme-toggle"), /top:\s*30px/);
   assert.match(cssBlock(".theme-toggle"), /left:\s*24px/);
+  assert.doesNotMatch(cssBlock(".theme-toggle"), /position:\s*fixed/);
+  assert.doesNotMatch(cssBlock(".theme-toggle"), /bottom:\s*30px/);
   assert.match(cssBlock(".theme-toggle"), /border-radius:\s*999px/);
   assert.match(html, /<svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" aria-hidden="true">/);
   assert.match(html, /<svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" aria-hidden="true">/);
@@ -197,8 +200,8 @@ test("page exposes a persistent theme toggle", () => {
   );
   assert.match(
     css,
-    /@media\s*\(max-width:\s*760px\)[\s\S]*?\.theme-toggle\s*\{[\s\S]*?bottom:\s*28px/,
-    "Expected mobile theme toggle in the mirrored lower-left control position",
+    /@media\s*\(max-width:\s*760px\)[\s\S]*?\.theme-toggle\s*\{[\s\S]*?top:\s*28px/,
+    "Expected mobile theme toggle in the upper-left non-sticky control position",
   );
 });
 
@@ -211,13 +214,18 @@ test("page exposes an on-by-default ambient audio toggle", () => {
   assert.match(html, /createAmbientAudioController\(document\);/);
   assert.match(cssBlock(".sound-toggle"), /position:\s*fixed/);
   assert.match(cssBlock(".sound-toggle"), /right:\s*24px/);
-  assert.match(cssBlock(".sound-toggle"), /bottom:\s*30px/);
+  assert.match(cssBlock(".sound-toggle"), /bottom:\s*96px/);
   assert.match(cssBlock(".sound-toggle"), /border-radius:\s*999px/);
   assert.match(css, /\.sound-toggle__bar\s*\{[\s\S]*?animation:\s*sound-meter/);
   assert.match(css, /\[data-sound-enabled="false"\]\s+\.sound-toggle__bar\s*\{/);
   assert.match(ambientAudioSource, /const STORAGE_KEY = "mayank-portfolio-sound"/);
   assert.match(ambientAudioSource, /AudioContext \|\| view\.webkitAudioContext/);
   assert.match(ambientAudioSource, /resolveSoundPreference\(storage\?\.getItem\(STORAGE_KEY\)\)/);
+  assert.match(
+    css,
+    /@media\s*\(max-width:\s*760px\)[\s\S]*?\.sound-toggle\s*\{[\s\S]*?bottom:\s*136px/,
+    "Expected mobile sound toggle to sit above the vignette and reveal button",
+  );
 });
 
 test("initial loader is wired as a short entrance layer", () => {

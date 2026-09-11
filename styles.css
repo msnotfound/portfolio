@@ -307,8 +307,8 @@ body.is-loading {
 }
 
 .theme-toggle {
-  position: fixed;
-  bottom: 30px;
+  position: absolute;
+  top: 30px;
   left: 24px;
   z-index: 130;
   width: 56px;
@@ -345,7 +345,7 @@ body.is-loading {
 
 .sound-toggle {
   position: fixed;
-  bottom: 30px;
+  bottom: 96px;
   right: 24px;
   z-index: 130;
   display: grid;
@@ -901,12 +901,12 @@ h2 em {
   }
 
   .theme-toggle {
-    bottom: 28px;
+    top: 28px;
     left: 16px;
   }
 
   .sound-toggle {
-    bottom: 28px;
+    bottom: 136px;
     right: 16px;
   }
 
