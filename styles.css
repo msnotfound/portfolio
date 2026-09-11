@@ -308,11 +308,11 @@ body.is-loading {
 
 .theme-toggle {
   position: absolute;
-  top: 30px;
+  top: clamp(148px, 18vh, 196px);
   left: 24px;
   z-index: 130;
-  width: 56px;
-  height: 32px;
+  width: 48px;
+  height: 26px;
   border: 1px solid color-mix(in srgb, var(--theme-toggle-accent) 48%, var(--line));
   border-radius: 999px;
   padding: 3px;
@@ -345,7 +345,7 @@ body.is-loading {
 
 .sound-toggle {
   position: fixed;
-  bottom: 96px;
+  bottom: 132px;
   right: 24px;
   z-index: 130;
   display: grid;
@@ -430,8 +430,8 @@ body.is-loading {
   top: 50%;
   display: grid;
   place-items: center;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: 999px;
   transform: translateY(-50%);
   transition:
@@ -457,8 +457,8 @@ body.is-loading {
 }
 
 .theme-icon {
-  width: 15px;
-  height: 15px;
+  width: 12px;
+  height: 12px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
@@ -901,7 +901,7 @@ h2 em {
   }
 
   .theme-toggle {
-    top: 28px;
+    top: 160px;
     left: 16px;
   }
 

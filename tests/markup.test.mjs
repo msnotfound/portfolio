@@ -178,8 +178,10 @@ test("page exposes a non-sticky upper-left theme toggle", () => {
   assert.match(html, /initThemeToggle\(document\);/);
   assert.match(css, /\[data-theme="light"\]\s*\{/);
   assert.match(cssBlock(".theme-toggle"), /position:\s*absolute/);
-  assert.match(cssBlock(".theme-toggle"), /top:\s*30px/);
+  assert.match(cssBlock(".theme-toggle"), /top:\s*clamp\(148px,\s*18vh,\s*196px\)/);
   assert.match(cssBlock(".theme-toggle"), /left:\s*24px/);
+  assert.match(cssBlock(".theme-toggle"), /width:\s*48px/);
+  assert.match(cssBlock(".theme-toggle"), /height:\s*26px/);
   assert.doesNotMatch(cssBlock(".theme-toggle"), /position:\s*fixed/);
   assert.doesNotMatch(cssBlock(".theme-toggle"), /bottom:\s*30px/);
   assert.match(cssBlock(".theme-toggle"), /border-radius:\s*999px/);
@@ -200,12 +202,17 @@ test("page exposes a non-sticky upper-left theme toggle", () => {
   );
   assert.match(
     css,
-    /@media\s*\(max-width:\s*760px\)[\s\S]*?\.theme-toggle\s*\{[\s\S]*?top:\s*28px/,
-    "Expected mobile theme toggle in the upper-left non-sticky control position",
+    /@media\s*\(max-width:\s*760px\)[\s\S]*?\.theme-toggle\s*\{[\s\S]*?top:\s*160px/,
+    "Expected mobile theme toggle level with the right-side nav links",
   );
 });
 
 test("page exposes an on-by-default ambient audio toggle", () => {
+  const bodyStart = indexOfSnippet("<body>");
+  const mainStart = indexOfSnippet('<main class="mask-stage" data-mask-root>');
+  const soundStart = indexOfSnippet('<button class="sound-toggle" type="button" data-sound-toggle aria-label="Pause background music" aria-pressed="true">');
+
+  assert.ok(soundStart > bodyStart && soundStart < mainStart, "Expected sound toggle at body level so fixed positioning survives page scroll");
   assert.match(
     html,
     /<button class="sound-toggle" type="button" data-sound-toggle aria-label="Pause background music" aria-pressed="true">/,
@@ -214,7 +221,7 @@ test("page exposes an on-by-default ambient audio toggle", () => {
   assert.match(html, /createAmbientAudioController\(document\);/);
   assert.match(cssBlock(".sound-toggle"), /position:\s*fixed/);
   assert.match(cssBlock(".sound-toggle"), /right:\s*24px/);
-  assert.match(cssBlock(".sound-toggle"), /bottom:\s*96px/);
+  assert.match(cssBlock(".sound-toggle"), /bottom:\s*132px/);
   assert.match(cssBlock(".sound-toggle"), /border-radius:\s*999px/);
   assert.match(css, /\.sound-toggle__bar\s*\{[\s\S]*?animation:\s*sound-meter/);
   assert.match(css, /\[data-sound-enabled="false"\]\s+\.sound-toggle__bar\s*\{/);
