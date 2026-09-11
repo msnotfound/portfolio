@@ -5,6 +5,8 @@ import test from "node:test";
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
 const cursorMaskSource = readFileSync(new URL("../src/cursorMask.mjs", import.meta.url), "utf8");
+const ambientAudioSource = readFileSync(new URL("../src/ambientAudio.mjs", import.meta.url), "utf8");
+const loaderSource = readFileSync(new URL("../src/initialLoader.mjs", import.meta.url), "utf8");
 
 function indexOfSnippet(snippet) {
   const index = html.indexOf(snippet);
@@ -200,6 +202,39 @@ test("page exposes a persistent theme toggle", () => {
   );
 });
 
+test("page exposes an on-by-default ambient audio toggle", () => {
+  assert.match(
+    html,
+    /<button class="sound-toggle" type="button" data-sound-toggle aria-label="Pause background music" aria-pressed="true">/,
+  );
+  assert.match(html, /import \{ createAmbientAudioController \} from "\.\/src\/ambientAudio\.mjs";/);
+  assert.match(html, /createAmbientAudioController\(document\);/);
+  assert.match(cssBlock(".sound-toggle"), /position:\s*fixed/);
+  assert.match(cssBlock(".sound-toggle"), /top:\s*118px/);
+  assert.match(cssBlock(".sound-toggle"), /border-radius:\s*999px/);
+  assert.match(css, /\.sound-toggle__bar\s*\{[\s\S]*?animation:\s*sound-meter/);
+  assert.match(css, /\[data-sound-enabled="false"\]\s+\.sound-toggle__bar\s*\{/);
+  assert.match(ambientAudioSource, /const STORAGE_KEY = "mayank-portfolio-sound"/);
+  assert.match(ambientAudioSource, /AudioContext \|\| view\.webkitAudioContext/);
+  assert.match(ambientAudioSource, /resolveSoundPreference\(storage\?\.getItem\(STORAGE_KEY\)\)/);
+});
+
+test("initial loader is wired as a short entrance layer", () => {
+  const bodyStart = indexOfSnippet("<body>");
+  const loaderStart = indexOfSnippet('<div class="initial-loader" data-loader aria-hidden="true">');
+  const mainStart = indexOfSnippet('<main class="mask-stage" data-mask-root>');
+
+  assert.ok(loaderStart > bodyStart && loaderStart < mainStart, "Expected loader before page content");
+  assert.match(html, /import \{ initInitialLoader \} from "\.\/src\/initialLoader\.mjs";/);
+  assert.match(html, /initInitialLoader\(document,\s*\{\s*delay:\s*760\s*\}\);/);
+  assert.match(cssBlock(".initial-loader"), /position:\s*fixed/);
+  assert.match(cssBlock(".initial-loader"), /z-index:\s*220/);
+  assert.match(css, /\.initial-loader\[data-loaded="true"\]\s*\{[\s\S]*?opacity:\s*0/);
+  assert.match(css, /\.loader-line::after\s*\{[\s\S]*?animation:\s*loader-line/);
+  assert.match(loaderSource, /root\.body\?\.classList\.add\("is-loading"\)/);
+  assert.match(loaderSource, /loader\.dataset\.loaded = "true"/);
+});
+
 test("mobile uses touch reveal instead of forcing the alternate hero layer open", () => {
   const bodyStart = indexOfSnippet("<body>");
   const mainStart = indexOfSnippet('<main class="mask-stage" data-mask-root>');
@@ -256,6 +291,20 @@ test("radial flood layer expands from the mobile pill origin", () => {
   assert.match(cssBlock(".stage-reveal-flood"), /clip-path:\s*circle\(var\(--flood-radius,\s*0px\) at var\(--pill-x,\s*50vw\) var\(--pill-y,\s*90vh\)\)/);
   assert.match(cssBlock(".stage-reveal-flood"), /transition:\s*clip-path 820ms cubic-bezier\(0\.19,\s*1,\s*0\.22,\s*1\)/);
   assert.match(css, /\.mobile-reveal-pill\[data-active="true"\]\s*\{[\s\S]*?box-shadow:\s*0 0 40px/);
+});
+
+test("mobile radial flood recolors the fixed top navbar", () => {
+  assert.match(cursorMaskSource, /documentElement\.dataset\.mobileFloodActive = "true"/);
+  assert.match(cursorMaskSource, /documentElement\.dataset\.mobileFloodActive = "false"/);
+  assert.match(css, /:root\[data-mobile-flood-active="true"\]\s+\.perimeter-top\s*\{/);
+  assert.match(
+    css,
+    /:root\[data-mobile-flood-active="true"\]\s+\.perimeter-top\s*\{[\s\S]*?color:\s*var\(--black\)/,
+  );
+  assert.match(
+    css,
+    /:root\[data-mobile-flood-active="true"\]\s+\.perimeter-top\s*\{[\s\S]*?background:\s*color-mix\(in srgb,\s*var\(--acid\) 86%, white 14%\)/,
+  );
 });
 
 test("mobile touch viewports hide the custom cursor follower", () => {

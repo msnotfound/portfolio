@@ -37,6 +37,12 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <div class="initial-loader" data-loader aria-hidden="true">
+      <span class="loader-kicker">Mayank Sahu</span>
+      <span class="loader-title">Portfolio</span>
+      <span class="loader-line"></span>
+    </div>
+
     <div class="screen-vignette screen-vignette-top" aria-hidden="true"></div>
     <div class="screen-vignette screen-vignette-bottom" aria-hidden="true"></div>
     <div class="perimeter perimeter-top" aria-hidden="true">
@@ -84,6 +90,13 @@
               <path d="M20.2 14.35A7.2 7.2 0 0 1 9.65 3.8a8.9 8.9 0 1 0 10.55 10.55Z" />
             </svg>
           </span>
+        </span>
+      </button>
+      <button class="sound-toggle" type="button" data-sound-toggle aria-label="Pause background music" aria-pressed="true">
+        <span class="sound-toggle__bars" aria-hidden="true">
+          <span class="sound-toggle__bar"></span>
+          <span class="sound-toggle__bar"></span>
+          <span class="sound-toggle__bar"></span>
         </span>
       </button>
 
@@ -254,13 +267,17 @@
         createWorkPreviewController,
         initMobileRadialFlood,
       } from "./src/cursorMask.mjs";
+      import { createAmbientAudioController } from "./src/ambientAudio.mjs";
+      import { initInitialLoader } from "./src/initialLoader.mjs";
       import { initThemeToggle } from "./src/themeToggle.mjs";
 
       const root = document.querySelector("[data-mask-root]");
       const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
 
+      initInitialLoader(document, { delay: 760 });
       initThemeToggle(document);
+      createAmbientAudioController(document);
 
       if (!prefersReducedMotion) {
         createTeleprompterScrollController(document);
