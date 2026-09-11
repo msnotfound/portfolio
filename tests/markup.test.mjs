@@ -178,8 +178,8 @@ test("page exposes a non-sticky upper-left theme toggle", () => {
   assert.match(html, /initThemeToggle\(document\);/);
   assert.match(css, /\[data-theme="light"\]\s*\{/);
   assert.match(cssBlock(".theme-toggle"), /position:\s*absolute/);
-  assert.match(cssBlock(".theme-toggle"), /top:\s*clamp\(148px,\s*18vh,\s*196px\)/);
-  assert.match(cssBlock(".theme-toggle"), /left:\s*24px/);
+  assert.match(cssBlock(".theme-toggle"), /top:\s*clamp\(80px,\s*10vh,\s*148px\)/);
+  assert.match(cssBlock(".theme-toggle"), /left:\s*70px/);
   assert.match(cssBlock(".theme-toggle"), /width:\s*48px/);
   assert.match(cssBlock(".theme-toggle"), /height:\s*26px/);
   assert.doesNotMatch(cssBlock(".theme-toggle"), /position:\s*fixed/);
@@ -211,8 +211,10 @@ test("page exposes an on-by-default ambient audio toggle", () => {
   const bodyStart = indexOfSnippet("<body>");
   const mainStart = indexOfSnippet('<main class="mask-stage" data-mask-root>');
   const soundStart = indexOfSnippet('<button class="sound-toggle" type="button" data-sound-toggle aria-label="Pause background music" aria-pressed="true">');
+  const audioStart = indexOfSnippet('<audio data-ambient-audio src="./musinova-minimal-techno-ambient-loop-edit-483369.mp3" loop preload="auto"></audio>');
 
   assert.ok(soundStart > bodyStart && soundStart < mainStart, "Expected sound toggle at body level so fixed positioning survives page scroll");
+  assert.ok(audioStart > bodyStart && audioStart < mainStart, "Expected ambient audio asset at body level");
   assert.match(
     html,
     /<button class="sound-toggle" type="button" data-sound-toggle aria-label="Pause background music" aria-pressed="true">/,
@@ -226,7 +228,10 @@ test("page exposes an on-by-default ambient audio toggle", () => {
   assert.match(css, /\.sound-toggle__bar\s*\{[\s\S]*?animation:\s*sound-meter/);
   assert.match(css, /\[data-sound-enabled="false"\]\s+\.sound-toggle__bar\s*\{/);
   assert.match(ambientAudioSource, /const STORAGE_KEY = "mayank-portfolio-sound"/);
-  assert.match(ambientAudioSource, /AudioContext \|\| view\.webkitAudioContext/);
+  assert.doesNotMatch(ambientAudioSource, /AudioContext \|\| view\.webkitAudioContext/);
+  assert.match(ambientAudioSource, /root\.querySelector\("\[data-ambient-audio\]"\)/);
+  assert.match(ambientAudioSource, /loader:complete/);
+  assert.match(ambientAudioSource, /fadeMs = options\.fadeMs \?\? 700/);
   assert.match(ambientAudioSource, /resolveSoundPreference\(storage\?\.getItem\(STORAGE_KEY\)\)/);
   assert.match(
     css,
@@ -249,6 +254,7 @@ test("initial loader is wired as a short entrance layer", () => {
   assert.match(css, /\.loader-line::after\s*\{[\s\S]*?animation:\s*loader-line/);
   assert.match(loaderSource, /root\.body\?\.classList\.add\("is-loading"\)/);
   assert.match(loaderSource, /loader\.dataset\.loaded = "true"/);
+  assert.match(loaderSource, /new CustomEvent\("loader:complete"/);
 });
 
 test("mobile uses touch reveal instead of forcing the alternate hero layer open", () => {

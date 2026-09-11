@@ -9,6 +9,9 @@ export function initInitialLoader(root = document, options = {}) {
   const complete = () => {
     loader.dataset.loaded = "true";
     root.body?.classList.remove("is-loading");
+    view.dispatchEvent(new CustomEvent("loader:complete", {
+      detail: { loader },
+    }));
   };
 
   const queueComplete = () => {

@@ -4,18 +4,29 @@ export function resolveSoundPreference(storedValue) {
   return storedValue !== "off";
 }
 
+export function computeFadeVolume(elapsedMs, fadeMs, targetVolume) {
+  const duration = Math.max(1, fadeMs);
+  const progress = Math.min(Math.max(elapsedMs / duration, 0), 1);
+  const eased = progress * progress * (3 - 2 * progress);
+
+  return Number((targetVolume * eased).toFixed(3));
+}
+
 export function createAmbientAudioController(root = document, options = {}) {
   const button = root.querySelector("[data-sound-toggle]");
-  if (!button) return { destroy() {} };
+  const audio = root.querySelector("[data-ambient-audio]");
+  if (!button || !audio) return { destroy() {} };
 
   const view = root.defaultView ?? root.ownerDocument?.defaultView ?? window;
   const storage = options.storage ?? view.localStorage;
   const body = root.body ?? root.documentElement;
-  const baseVolume = options.volume ?? 0.018;
+  const targetVolume = options.volume ?? 0.22;
+  const fadeMs = options.fadeMs ?? 700;
+  const loader = root.querySelector("[data-loader]");
   let isEnabled = resolveSoundPreference(storage?.getItem(STORAGE_KEY));
-  let context = null;
-  let master = null;
-  let oscillators = [];
+  let isLoaderComplete = !loader || loader.dataset.loaded === "true";
+  let fadeFrame = 0;
+  let fadeStartedAt = 0;
 
   const setButtonState = () => {
     button.setAttribute("aria-pressed", isEnabled ? "true" : "false");
@@ -26,55 +37,51 @@ export function createAmbientAudioController(root = document, options = {}) {
     body?.setAttribute("data-sound-enabled", isEnabled ? "true" : "false");
   };
 
-  const buildGraph = () => {
-    const AudioContext = view.AudioContext || view.webkitAudioContext;
-    if (!AudioContext) return null;
-
-    context = new AudioContext();
-    master = context.createGain();
-    master.gain.value = baseVolume;
-    master.connect(context.destination);
-
-    const frequencies = [146.83, 220, 277.18];
-    oscillators = frequencies.map((frequency, index) => {
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      oscillator.type = index === 1 ? "sine" : "triangle";
-      oscillator.frequency.value = frequency;
-      gain.gain.value = index === 1 ? 0.42 : 0.28;
-      oscillator.connect(gain);
-      gain.connect(master);
-      oscillator.start();
-      return oscillator;
-    });
-
-    return context;
-  };
-
-  const start = async () => {
-    if (!isEnabled) return;
-    const audioContext = context ?? buildGraph();
-    try {
-      await audioContext?.resume?.();
-    } catch {
-      // Browsers commonly block audio until a gesture; the first pointerdown retries.
-    }
-  };
-
-  const stop = async () => {
-    try {
-      await context?.suspend?.();
-    } catch {
-      // Suspending is best-effort only.
-    }
-  };
-
   const savePreference = () => {
     try {
       storage?.setItem(STORAGE_KEY, isEnabled ? "on" : "off");
     } catch {
-      // Private browsing or strict storage settings should not break the control.
+      // Storage can be blocked; audio should still remain controllable.
     }
+  };
+
+  const cancelFade = () => {
+    if (fadeFrame) {
+      view.cancelAnimationFrame(fadeFrame);
+      fadeFrame = 0;
+    }
+  };
+
+  const fadeIn = (timestamp) => {
+    if (!fadeStartedAt) fadeStartedAt = timestamp;
+    audio.volume = computeFadeVolume(timestamp - fadeStartedAt, fadeMs, targetVolume);
+
+    if (audio.volume < targetVolume && isEnabled) {
+      fadeFrame = view.requestAnimationFrame(fadeIn);
+    } else {
+      audio.volume = targetVolume;
+      fadeFrame = 0;
+    }
+  };
+
+  const start = async () => {
+    if (!isEnabled || !isLoaderComplete) return;
+    cancelFade();
+    audio.volume = 0;
+    fadeStartedAt = 0;
+
+    try {
+      await audio.play();
+      fadeFrame = view.requestAnimationFrame(fadeIn);
+    } catch {
+      // Mobile browsers may require the next tap after the loader is gone.
+    }
+  };
+
+  const stop = () => {
+    cancelFade();
+    audio.pause();
+    audio.volume = 0;
   };
 
   const toggle = async () => {
@@ -89,24 +96,31 @@ export function createAmbientAudioController(root = document, options = {}) {
     }
   };
 
-  const handleFirstGesture = () => {
+  const handleLoaderComplete = () => {
+    isLoaderComplete = true;
+    start();
+  };
+
+  const handleGestureRetry = () => {
     start();
   };
 
   button.addEventListener("click", toggle);
-  view.addEventListener("pointerdown", handleFirstGesture, { once: true, passive: true });
+  view.addEventListener("loader:complete", handleLoaderComplete);
+  view.addEventListener("pointerdown", handleGestureRetry, { passive: true });
+  audio.volume = 0;
   setButtonState();
-  start();
+
+  if (isLoaderComplete) {
+    start();
+  }
 
   return {
     destroy() {
       button.removeEventListener("click", toggle);
-      view.removeEventListener("pointerdown", handleFirstGesture);
-      oscillators.forEach((oscillator) => oscillator.stop?.());
-      context?.close?.();
-      oscillators = [];
-      context = null;
-      master = null;
+      view.removeEventListener("loader:complete", handleLoaderComplete);
+      view.removeEventListener("pointerdown", handleGestureRetry);
+      stop();
     },
   };
 }

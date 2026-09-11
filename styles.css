@@ -308,8 +308,8 @@ body.is-loading {
 
 .theme-toggle {
   position: absolute;
-  top: clamp(148px, 18vh, 196px);
-  left: 24px;
+  top: clamp(80px, 10vh, 148px);
+  left: 70px;
   z-index: 130;
   width: 48px;
   height: 26px;
@@ -901,7 +901,7 @@ h2 em {
   }
 
   .theme-toggle {
-    top: 160px;
+    top: 70px;
     left: 16px;
   }
 
