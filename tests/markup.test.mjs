@@ -233,6 +233,8 @@ test("page exposes an on-by-default ambient audio toggle", () => {
   assert.match(ambientAudioSource, /loader:complete/);
   assert.match(ambientAudioSource, /fadeMs = options\.fadeMs \?\? 700/);
   assert.match(ambientAudioSource, /resolveSoundPreference\(storage\?\.getItem\(STORAGE_KEY\)\)/);
+  assert.doesNotMatch(ambientAudioSource, /addEventListener\("pointerdown",\s*handleGestureRetry/);
+  assert.match(ambientAudioSource, /addEventListener\("click",\s*handleGestureRetry,\s*\{\s*once:\s*true\s*\}\)/);
   assert.match(
     css,
     /@media\s*\(max-width:\s*760px\)[\s\S]*?\.sound-toggle\s*\{[\s\S]*?bottom:\s*136px/,
@@ -341,6 +343,19 @@ test("mobile touch viewports hide the custom cursor follower", () => {
   const mobileMedia = css.slice(mobileMediaStart, reducedMotionStart);
 
   assert.match(mobileMedia, /\.cursor-orbit\s*\{[\s\S]*?display:\s*none/);
+});
+
+test("mobile touch viewports remove expensive grain and promote the pill orbit", () => {
+  const mobileMediaStart = css.indexOf("@media (max-width: 760px), (pointer: coarse)");
+  const reducedMotionStart = css.indexOf("@media (prefers-reduced-motion: reduce)");
+  assert.notEqual(mobileMediaStart, -1, "Expected mobile/coarse media block");
+  assert.notEqual(reducedMotionStart, -1, "Expected reduced motion media block");
+  const mobileMedia = css.slice(mobileMediaStart, reducedMotionStart);
+
+  assert.match(mobileMedia, /\.grain\s*\{[\s\S]*?display:\s*none/);
+  assert.match(mobileMedia, /\.pill-orbit\s*\{[\s\S]*?will-change:\s*transform/);
+  assert.match(mobileMedia, /\.pill-orbit\s*\{[\s\S]*?transform-origin:\s*50% 50%/);
+  assert.match(mobileMedia, /\.pill-orbit\s*\{[\s\S]*?transform-box:\s*fill-box/);
 });
 
 test("mobile touch viewports lock the headline hover reveal closed", () => {

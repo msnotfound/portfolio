@@ -12,6 +12,15 @@ export function computeFadeVolume(elapsedMs, fadeMs, targetVolume) {
   return Number((targetVolume * eased).toFixed(3));
 }
 
+export function shouldAttemptAmbientStart({
+  isEnabled,
+  isLoaderComplete,
+  isPlayPending,
+  paused,
+}) {
+  return Boolean(isEnabled && isLoaderComplete && !isPlayPending && paused);
+}
+
 export function createAmbientAudioController(root = document, options = {}) {
   const button = root.querySelector("[data-sound-toggle]");
   const audio = root.querySelector("[data-ambient-audio]");
@@ -25,6 +34,7 @@ export function createAmbientAudioController(root = document, options = {}) {
   const loader = root.querySelector("[data-loader]");
   let isEnabled = resolveSoundPreference(storage?.getItem(STORAGE_KEY));
   let isLoaderComplete = !loader || loader.dataset.loaded === "true";
+  let isPlayPending = false;
   let fadeFrame = 0;
   let fadeStartedAt = 0;
 
@@ -65,7 +75,18 @@ export function createAmbientAudioController(root = document, options = {}) {
   };
 
   const start = async () => {
-    if (!isEnabled || !isLoaderComplete) return;
+    if (
+      !shouldAttemptAmbientStart({
+        isEnabled,
+        isLoaderComplete,
+        isPlayPending,
+        paused: audio.paused,
+      })
+    ) {
+      return;
+    }
+
+    isPlayPending = true;
     cancelFade();
     audio.volume = 0;
     fadeStartedAt = 0;
@@ -75,6 +96,8 @@ export function createAmbientAudioController(root = document, options = {}) {
       fadeFrame = view.requestAnimationFrame(fadeIn);
     } catch {
       // Mobile browsers may require the next tap after the loader is gone.
+    } finally {
+      isPlayPending = false;
     }
   };
 
@@ -107,7 +130,7 @@ export function createAmbientAudioController(root = document, options = {}) {
 
   button.addEventListener("click", toggle);
   view.addEventListener("loader:complete", handleLoaderComplete);
-  view.addEventListener("pointerdown", handleGestureRetry, { passive: true });
+  view.addEventListener("click", handleGestureRetry, { once: true });
   audio.volume = 0;
   setButtonState();
 
@@ -119,7 +142,7 @@ export function createAmbientAudioController(root = document, options = {}) {
     destroy() {
       button.removeEventListener("click", toggle);
       view.removeEventListener("loader:complete", handleLoaderComplete);
-      view.removeEventListener("pointerdown", handleGestureRetry);
+      view.removeEventListener("click", handleGestureRetry);
       stop();
     },
   };

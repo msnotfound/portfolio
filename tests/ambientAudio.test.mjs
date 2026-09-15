@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { computeFadeVolume, resolveSoundPreference } from "../src/ambientAudio.mjs";
+import {
+  computeFadeVolume,
+  resolveSoundPreference,
+  shouldAttemptAmbientStart,
+} from "../src/ambientAudio.mjs";
 
 test("ambient audio defaults on unless the stored preference is off", () => {
   assert.equal(resolveSoundPreference(null), true);
@@ -13,4 +17,52 @@ test("ambient audio fade volume eases from silence to target volume", () => {
   assert.equal(computeFadeVolume(0, 700, 0.42), 0);
   assert.equal(computeFadeVolume(350, 700, 0.42), 0.21);
   assert.equal(computeFadeVolume(900, 700, 0.42), 0.42);
+});
+
+test("ambient audio only starts when enabled, loaded, idle, and paused", () => {
+  assert.equal(
+    shouldAttemptAmbientStart({
+      isEnabled: true,
+      isLoaderComplete: true,
+      isPlayPending: false,
+      paused: true,
+    }),
+    true,
+  );
+  assert.equal(
+    shouldAttemptAmbientStart({
+      isEnabled: true,
+      isLoaderComplete: true,
+      isPlayPending: false,
+      paused: false,
+    }),
+    false,
+  );
+  assert.equal(
+    shouldAttemptAmbientStart({
+      isEnabled: true,
+      isLoaderComplete: true,
+      isPlayPending: true,
+      paused: true,
+    }),
+    false,
+  );
+  assert.equal(
+    shouldAttemptAmbientStart({
+      isEnabled: false,
+      isLoaderComplete: true,
+      isPlayPending: false,
+      paused: true,
+    }),
+    false,
+  );
+  assert.equal(
+    shouldAttemptAmbientStart({
+      isEnabled: true,
+      isLoaderComplete: false,
+      isPlayPending: false,
+      paused: true,
+    }),
+    false,
+  );
 });
