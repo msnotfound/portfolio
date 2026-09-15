@@ -178,7 +178,7 @@ test("page exposes a non-sticky upper-left theme toggle", () => {
   assert.match(html, /initThemeToggle\(document\);/);
   assert.match(css, /\[data-theme="light"\]\s*\{/);
   assert.match(cssBlock(".theme-toggle"), /position:\s*absolute/);
-  assert.match(cssBlock(".theme-toggle"), /top:\s*clamp\(80px,\s*10vh,\s*148px\)/);
+  assert.match(cssBlock(".theme-toggle"), /top:\s*clamp\(70px,\s*10vh,\s*148px\)/);
   assert.match(cssBlock(".theme-toggle"), /left:\s*70px/);
   assert.match(cssBlock(".theme-toggle"), /width:\s*48px/);
   assert.match(cssBlock(".theme-toggle"), /height:\s*26px/);
@@ -202,7 +202,7 @@ test("page exposes a non-sticky upper-left theme toggle", () => {
   );
   assert.match(
     css,
-    /@media\s*\(max-width:\s*760px\)[\s\S]*?\.theme-toggle\s*\{[\s\S]*?top:\s*160px/,
+    /@media\s*\(max-width:\s*760px\)[\s\S]*?\.theme-toggle\s*\{[\s\S]*?top:\s*60px/,
     "Expected mobile theme toggle level with the right-side nav links",
   );
 });
@@ -211,7 +211,7 @@ test("page exposes an on-by-default ambient audio toggle", () => {
   const bodyStart = indexOfSnippet("<body>");
   const mainStart = indexOfSnippet('<main class="mask-stage" data-mask-root>');
   const soundStart = indexOfSnippet('<button class="sound-toggle" type="button" data-sound-toggle aria-label="Pause background music" aria-pressed="true">');
-  const audioStart = indexOfSnippet('<audio data-ambient-audio src="./musinova-minimal-techno-ambient-loop-edit-483369.mp3" loop preload="auto"></audio>');
+  const audioStart = indexOfSnippet('<audio data-ambient-audio src="./ambient-loop.webm" loop preload="auto"></audio>');
 
   assert.ok(soundStart > bodyStart && soundStart < mainStart, "Expected sound toggle at body level so fixed positioning survives page scroll");
   assert.ok(audioStart > bodyStart && audioStart < mainStart, "Expected ambient audio asset at body level");
